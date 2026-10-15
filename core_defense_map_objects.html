@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>코어 디펜스: 공명 작전</title>
+<style>
+:root{--bg:#07111d;--panel:#101d30;--panel2:#172a42;--line:#2c4664;--text:#edf5ff;--muted:#9bb0c9;--cyan:#53efdc;--gold:#ffd26b;--red:#ff647e;--purple:#c19aff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 20% 0%,#1b3554 0,#07111d 58%);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}.wrap{max-width:1700px;height:100vh;min-height:0;margin:auto;padding:8px 12px;display:flex;flex-direction:column;overflow:hidden}.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;flex:0 0 auto}.brand h1{margin:0;font-size:clamp(21px,2.5vw,30px);letter-spacing:-1px}.brand p{margin:3px 0 0;color:var(--muted);font-size:11px}.stats{display:flex;gap:7px;flex-wrap:wrap}.stat{background:linear-gradient(160deg,#152740,#0c1829);border:1px solid var(--line);border-radius:10px;padding:6px 9px;min-width:76px;box-shadow:0 8px 22px #0002}.stat small{display:block;color:var(--muted);font-size:10px}.stat b{font-size:16px}.progress{height:4px;background:#253a53;border-radius:20px;margin-top:5px;overflow:hidden}.progress div{height:100%;background:linear-gradient(90deg,#49caff,#53efdc);width:0}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 285px;gap:10px;align-items:stretch;flex:1;min-height:0}.gamepanel,.side{background:rgba(15,27,45,.96);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 18px 50px #0003;min-height:0}.gamehead{padding:7px 11px;display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid var(--line)}.gamehead span{font-size:12px}.pill{background:#203954;border:1px solid #3d5b7b;border-radius:50px;padding:4px 8px;color:#d4e7fa;font-size:10px;white-space:nowrap}.status{color:var(--cyan);font-weight:750}.battlebar{padding:6px 9px;background:linear-gradient(90deg,#111f33,#14243b);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:9px;flex-wrap:wrap}.battlebar h3{margin:0 4px 0 0;font-size:12px;color:#c7d8ed}.skillbtn{border:1px solid #3d4f78;border-radius:9px;background:#1b2c45;color:var(--text);padding:6px 8px;min-height:42px;cursor:pointer;text-align:left;min-width:155px}.skillbtn strong{display:block;font-size:12px}.skillbtn small{display:block;color:#aebed4;font-size:10px;margin-top:3px}.skillbtn:hover:not(:disabled){border-color:var(--purple);background:#263452}.skillbtn:disabled{opacity:.38;cursor:not-allowed}.energyBox{min-width:120px;flex:1}.energyTop{display:flex;justify-content:space-between;color:var(--muted);font-size:10px;margin-bottom:5px}.energyTrack{height:8px;background:#263953;border-radius:20px;overflow:hidden}.energyTrack div{height:100%;width:0;background:linear-gradient(90deg,#8b73ff,#4fe6ff);transition:width .16s}.speedbtn{margin-left:auto;white-space:nowrap;border:1px solid #3b5879;border-radius:9px;background:#203954;color:var(--text);padding:8px 10px;font-weight:800;cursor:pointer}.speedbtn.active{border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 0 1px #53efdc33}.canvasbox{padding:5px;background:#091321;flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden}.board{position:relative;width:100%;display:flex;align-items:center;justify-content:center}canvas{display:block;width:auto;height:auto;max-width:100%;max-height:calc(100vh - 185px);object-fit:contain;border-radius:10px;background:#0e1d2c;touch-action:none;cursor:crosshair}.hint{padding:6px 10px;color:var(--muted);font-size:11px;line-height:1.55;border-top:1px solid var(--line)}.side{padding:9px;overflow-y:auto;scrollbar-width:thin}.section{border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:8px}.side h2{font-size:14px;margin:0 0 9px}.moneyline{color:var(--gold);font-weight:800;font-size:11px;margin:-2px 0 9px}.weapons{display:grid;grid-template-columns:1fr 1fr;gap:7px}.weapon{background:linear-gradient(155deg,#1b304b,#132239);color:var(--text);border:1px solid #314a69;border-radius:10px;padding:7px 7px;text-align:left;cursor:grab;min-height:66px;touch-action:none;user-select:none}.weapon:active{cursor:grabbing}.weapon:hover,.weapon.active{border-color:var(--cyan);box-shadow:0 0 0 1px #53efdc33,inset 0 0 20px #53efdc0d}.weapon:disabled{opacity:.38;cursor:not-allowed}.weapon .emoji{font-size:18px;display:block;margin-bottom:2px}.weapon b{font-size:12px;display:block}.weapon small{font-size:10px;color:var(--muted);display:block;margin-top:3px}.btn{width:100%;border:0;border-radius:9px;padding:8px 9px;font-weight:800;cursor:pointer;margin-top:8px;font-size:12px}.btn:disabled{opacity:.37;cursor:not-allowed}.primary{background:linear-gradient(100deg,#53efdc,#8bf4b9);color:#07232b}.secondary{background:#223954;color:var(--text);border:1px solid #3b5879}.danger{background:#392337;color:#ffb9c5;border:1px solid #684057}.selection{background:#0b1726;border:1px solid var(--line);border-radius:10px;padding:8px;min-height:70px}.selection h3{margin:0 0 6px;font-size:14px}.selection p{margin:4px 0;color:var(--muted);font-size:11px;line-height:1.45}.leveltag{color:var(--cyan);font-weight:800}.choices{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:7px}.choices button{font-size:10px;padding:9px 5px;margin:0}.subtle{color:var(--muted);font-size:10px;line-height:1.45}.log{margin-top:9px;padding:9px;background:#0b1726;border:1px solid #203750;border-radius:9px;color:#b1c4dd;font-size:11px;line-height:1.5;min-height:43px}.enemyGuide{display:grid;grid-template-columns:1fr 1fr;gap:6px}.guideitem{background:#0d1a2a;border:1px solid #263b54;border-radius:9px;padding:7px;font-size:10px;line-height:1.35}.guideitem b{display:block;font-size:11px;margin-bottom:3px}.guideitem span{color:#a8bdd3}.feature{border:1px solid #3b4267;background:linear-gradient(120deg,#171f39,#122538);border-radius:10px;padding:9px;font-size:10px;color:#c3d3e9;line-height:1.5}.feature strong{color:#d8c4ff;font-size:11px}
+.overlay{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:#06101be8;border:1px solid #35516e;border-radius:10px;text-align:center;padding:22px;z-index:5}.overlay.show{display:flex}.overlay h2{font-size:clamp(25px,4vw,38px);margin:0 0 8px}.overlay p{color:#b9c8dc;line-height:1.5;margin:0 0 13px}.footer{text-align:center;color:#6f85a1;font-size:9px;padding:5px 0 0;flex:0 0 auto}.modal{display:none;position:fixed;inset:0;z-index:20;background:#030914d9;backdrop-filter:blur(5px);align-items:center;justify-content:center;padding:16px}.modal.show{display:flex}.diffgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}.diffpick{padding:15px 10px;border:1px solid #3d5778;border-radius:12px;background:#172a42;color:var(--text);cursor:pointer;text-align:left}.diffpick b{display:block;font-size:16px;margin-bottom:6px}.diffpick span{font-size:11px;color:var(--muted);line-height:1.5}.diffpick.active{border-color:var(--cyan);box-shadow:0 0 0 2px #53efdc33;background:#193a43}@media(max-width:600px){.diffgrid{grid-template-columns:1fr}}.modalbox{max-width:850px;width:100%;background:#101e32;border:1px solid #45617f;border-radius:18px;padding:22px;box-shadow:0 30px 100px #0008}.modalbox h2{margin:0 0 6px;font-size:clamp(22px,3vw,30px)}.modalbox>p{margin:0 0 16px;color:var(--muted);font-size:13px}.relics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.relic{min-height:150px;text-align:left;padding:14px;border-radius:13px;border:1px solid #3d5778;background:linear-gradient(145deg,#1c304a,#111f32);color:var(--text);cursor:pointer}.relic:hover{border-color:var(--cyan);transform:translateY(-2px);box-shadow:0 12px 30px #0003}.relic .icon{font-size:27px;display:block;margin-bottom:8px}.relic b{display:block;font-size:14px;margin-bottom:6px}.relic span{color:#afc2da;font-size:11px;line-height:1.45}.relic em{display:block;color:var(--gold);font-style:normal;font-size:10px;margin-top:9px}.mapgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:16px 0}.mappick{padding:0;border:2px solid #3d5778;border-radius:13px;overflow:hidden;background:#172a42;color:var(--text);cursor:pointer;text-align:left}.mappick.active{border-color:var(--cyan);box-shadow:0 0 0 2px #53efdc33}.mapthumb{height:92px;padding:10px;display:flex;align-items:center;justify-content:center;font-size:30px;letter-spacing:8px}.mappick b{display:block;padding:8px 10px 2px}.mappick span{display:block;padding:0 10px 10px;font-size:11px;color:var(--muted)}.chestbox{text-align:center;max-width:560px}.chest{font-size:100px;line-height:1.25;display:block;filter:drop-shadow(0 0 20px #ffd26b66);transition:transform .5s,filter .5s}.chest.opening{transform:scale(1.18) rotate(-5deg);filter:drop-shadow(0 0 32px #ffd26b)}.chestresult{font-size:18px;font-weight:800;color:#ffd26b;margin:12px 0}.weapons .weapon[data-exclusive="true"]{border-color:#c19aff;background:linear-gradient(155deg,#34264f,#172239)}@media(max-width:600px){.mapgrid{grid-template-columns:1fr}}
+@media(max-width:1000px) and (min-height:650px){.wrap{padding:7px}.layout{grid-template-columns:minmax(0,1fr) 260px;gap:8px}.top{gap:7px}.brand p{display:none}.stat{min-width:65px;padding:5px 7px}.stat small{font-size:9px}.stat b{font-size:14px}.battlebar{gap:5px}.skillbtn{min-width:130px}.canvasbox{padding:3px}canvas{max-height:calc(100vh - 165px)}}@media(max-width:760px){.wrap{height:auto;min-height:100vh;overflow:visible}.top{align-items:flex-start;flex-direction:column}.stats{width:100%}.stat{flex:1}.layout{grid-template-columns:1fr}.gamepanel{overflow:visible}.side{display:grid;grid-template-columns:1fr 1fr;gap:8px}.side .full{grid-column:1/-1}.canvasbox{display:block}.board{display:block}canvas{max-height:none}.footer{padding:8px 0}.relics{grid-template-columns:1fr}.relic{min-height:0}.modalbox{padding:15px;max-height:92vh;overflow:auto}}@media(max-height:650px) and (min-width:761px){.wrap{padding:5px 8px}.brand h1{font-size:22px}.brand p{display:none}.top{margin-bottom:5px}.stat{padding:4px 7px}.stat small{font-size:9px}.stat b{font-size:13px}.gamehead{padding:5px 9px}.battlebar{padding:4px 7px}.skillbtn{min-height:36px;padding:4px 7px}.skillbtn small{display:none}.canvasbox{padding:2px}canvas{width:100%;max-height:calc(100vh - 135px)}.hint{font-size:10px;padding:4px 8px}.side{padding:7px}.weapon{min-height:58px}.footer{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+ <div class="brand"><h1>🛡️ 코어 디펜스: 공명 작전</h1><p>다중 경로 · 전용 카운터 적 · 드래그 배치 · 코어 유물 로그라이크</p></div>
+ <div class="stats">
+  <div class="stat"><small>보유 골드</small><b id="gold">700</b></div>
+  <div class="stat"><small>코어 체력</small><b id="hp">35 / 35</b></div>
+  <div class="stat"><small>작전 단계</small><b id="stage">1 / 15</b><div class="progress"><div id="stageProgress"></div></div></div>
+  <div class="stat"><small>현재 웨이브</small><b id="wave">0 / 4</b></div>
+  <div class="stat"><small>처치 수</small><b id="kills">0</b></div>
+ </div>
+</header>
+<main class="layout">
+<section class="gamepanel">
+ <div class="gamehead"><strong>전장 <span class="pill" id="routePill">2개 경로</span></strong><span id="gameStatus" class="status">포탑 카드를 전장에 드래그하거나 카드를 선택한 뒤 원하는 위치를 클릭하세요.</span></div>
+ <div class="battlebar">
+  <h3>전술 스킬</h3>
+  <button id="empBtn" class="skillbtn" disabled><strong>🧊 EMP 정지 펄스 · 50</strong><small>현재 전장의 적을 2.5초 정지</small></button>
+  <button id="overdriveBtn" class="skillbtn" disabled><strong>⚡ 오버드라이브 · 60</strong><small>6초간 포탑 공격 강화</small></button>
+  <div class="energyBox"><div class="energyTop"><span>코어 에너지</span><b id="energyText">0 / 100</b></div><div class="energyTrack"><div id="energyFill"></div></div></div>
+  <button id="speedBtn" class="speedbtn" aria-pressed="false">⏩ 2배속 켜기</button><button id="audioBtn" class="speedbtn" aria-pressed="true">🔊 사운드 켜짐</button>
+ </div>
+ <div class="canvasbox"><div class="board"><canvas id="game" width="900" height="600" aria-label="코어 디펜스 전장"></canvas><div id="overlay" class="overlay"><div><h2 id="overlayTitle">코어가 위험해!</h2><p id="overlayText">포탑 배치와 전술 스킬을 바꿔 다시 도전해 보세요.</p><button class="btn primary" id="restart">새 작전 시작</button></div></div></div></div>
+ <div class="hint">조작: 포탑 카드를 전장 원하는 위치로 드래그하거나, 카드를 선택한 뒤 원하는 곳을 클릭하세요. 적 경로와 너무 가까운 곳이나 다른 포탑에 너무 가까운 곳은 설치할 수 없습니다. 포탑을 드래그해 위치를 옮길 수도 있습니다. 포탑을 클릭하면 강화 메뉴가 열립니다.</div>
+</section>
+<aside class="side">
+ <div id="defenseControls" style="display:contents">
+ <div class="full section"><h2>⚙️ 포탑 배치</h2><div class="moneyline">자유 배치 · 포탑 사이 간격 약 80px · 경로 위에는 설치 불가</div>
+  <div class="weapons">
+   <button class="weapon" data-type="gun"><span class="emoji">🔫</span><b>기관포 · 120G</b><small>빠른 연사 · 러너 대응</small></button>
+   <button class="weapon" data-type="cannon"><span class="emoji">💣</span><b>캐논포 · 180G</b><small>범위 공격 · 보호막 파괴</small></button>
+   <button class="weapon" data-type="frost"><span class="emoji">❄️</span><b>냉각포 · 160G</b><small>둔화 · 위상 적 대응</small></button>
+   <button class="weapon" data-type="laser"><span class="emoji">⚡</span><b>레이저포 · 240G</b><small>장갑 관통 · 위상 적 대응</small></button>
+  </div>
+  <div class="weapons" id="exclusiveWeapons" style="margin-top:7px"><button class="weapon" data-type="prism" data-exclusive="true" hidden><span class="emoji">🔮</span><b>프리즘 포탑</b><small>클리어 전용 · 광자탄</small></button><button class="weapon" data-type="arc" data-exclusive="true" hidden><span class="emoji">🌩️</span><b>아크 포탑</b><small>클리어 전용 · 연쇄 전류</small></button><button class="weapon" data-type="nova" data-exclusive="true" hidden><span class="emoji">🌟</span><b>노바 포탑</b><small>클리어 전용 · 별빛 폭발</small></button></div>
+  <button id="waveBtn" class="btn primary">▶ 웨이브 시작</button><button id="cancelBtn" class="btn secondary">설치 선택 취소</button>
+  <p class="subtle" id="rewardText">시작 보급: 700G · 2개 경로 동시 방어</p>
+ </div>
+ <div class="full section"><h2>🎯 선택한 포탑</h2><div class="selection" id="selection"><h3>포탑을 선택하세요</h3><p>설치한 포탑을 클릭하면 능력치와 강화 비용이 표시됩니다.</p></div>
+  <button id="upgradeBtn" class="btn primary" disabled>⬆️ 강화 방향 선택</button><div id="branchChoices" class="choices" style="display:none;grid-template-columns:1fr"><button class="btn secondary" id="powerBranch">💥 화력 강화 · 공격력 +30%</button><button class="btn secondary" id="rangeBranch">🔭 사거리 강화 · 사거리 +18</button><button class="btn secondary" id="speedBranch">⚡ 속사 강화 · 공격 속도 +22%</button></div>
+  <button id="sellBtn" class="btn danger" disabled>포탑 판매 (일부 환급)</button>
+ </div>
+ </div>
+ <div id="attackPanel" class="full section" hidden>
+  <h2>⚔️ 공격 지휘</h2><p class="subtle">친구의 방어선을 상대로 유닛을 전송하세요. 자원은 시간에 따라 회복되며, 강한 유닛은 더 많은 자원을 사용합니다.</p>
+  <div class="moneyline">공격 자원: <span id="attackEnergyText">연결 대기 중</span></div>
+  <div class="weapons">
+   <button class="weapon attack-unit" data-kind="grunt"><span class="emoji">🤖</span><b>돌격병 · 45</b><small>기본 유닛 · 부담 적음</small></button>
+   <button class="weapon attack-unit" data-kind="runner"><span class="emoji">💨</span><b>고속 유닛 · 65</b><small>빠르게 코어로 돌진</small></button>
+   <button class="weapon attack-unit" data-kind="tank"><span class="emoji">🛡️</span><b>중장갑 · 115</b><small>체력이 높은 공성 유닛</small></button>
+   <button class="weapon attack-unit" data-kind="phase"><span class="emoji">👻</span><b>위상 유닛 · 85</b><small>일부 포탑을 무시</small></button>
+   <button class="weapon attack-unit" data-kind="shield"><span class="emoji">🔷</span><b>보호막 유닛 · 95</b><small>보호막으로 포화 견딤</small></button>
+   <button class="weapon attack-unit" data-kind="healer"><span class="emoji">💚</span><b>수리 유닛 · 100</b><small>근처 적을 치유</small></button>
+   <button class="weapon attack-unit" data-kind="boss" style="grid-column:1/-1"><span class="emoji">👹</span><b>보스 · 260</b><small>비싸지만 매우 강력한 공격</small></button>
+  </div>
+  <p id="attackStatus" class="log">상대 방어선과 연결하는 중…</p>
+ </div>
+ <div class="full"><div class="log" id="log">작전 팁: 원하는 위치에 자유롭게 배치하세요. 포탑 사이에는 약 80px 간격이 필요하고, 서로 다른 포탑을 조합하면 공명 효과를 얻을 수 있어요.</div></div>
+</aside>
+</main>
+<div class="footer">CORE DEFENSE: RESONANCE OPS · 15단계 로그라이크 디펜스</div>
+</div>
+<div id="difficultyModal" class="modal show" role="dialog" aria-modal="true" aria-labelledby="difficultyTitle"><div class="modalbox"><h2 id="difficultyTitle">🎮 작전 난이도 선택</h2><p>난이도가 올라갈수록 적의 체력·보호막·코어 피해가 두 배씩 강해집니다. 적 처치 보상도 배율에 맞춰 늘어납니다. 선택은 캠페인 전체에 적용됩니다.</p><div class="diffgrid"><button class="diffpick" data-difficulty="easy"><b>🟢 쉬움 · 1배</b><span>처음 플레이하거나 포탑 조합을 익히기 좋은 난이도</span></button><button class="diffpick active" data-difficulty="normal"><b>🟡 보통 · 2배</b><span>전략적인 배치와 업그레이드가 필요한 기본 난이도</span></button><button class="diffpick" data-difficulty="hard"><b>🔴 어려움 · 4배</b><span>강한 적과 높은 코어 피해. 최적화된 방어가 필요</span></button></div><button id="startMissionBtn" class="btn primary">선택한 난이도로 작전 시작</button><p class="subtle" id="difficultyHint">예상 난이도: 보통 — 좋은 배치와 약점 대응으로 클리어를 노릴 수 있습니다.</p></div></div>
+<div id="modeModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modeTitle"><div class="modalbox">
+ <h2 id="modeTitle">⚔️ 플레이 방식 선택</h2><p>난이도를 정했어요. 혼자 디펜스를 즐기거나, 친구와 연결해 한 명은 방어하고 다른 한 명은 적을 보내는 1대1 대전을 할 수 있어요.</p>
+ <div class="diffgrid" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+  <button class="diffpick active" id="chooseDefenseMode"><b>🛡️ 디펜스</b><span>기존처럼 포탑을 설치해 적 웨이브를 막아요. 혼자 플레이하거나 친구 대전의 방장이 될 수 있어요.</span></button>
+  <button class="diffpick" id="chooseAttackMode"><b>⚔️ 공격 · 1대1 참가</b><span>친구가 만든 방 코드로 접속해 적 유닛을 보내며 상대 코어를 먼저 파괴하세요.</span></button>
+ </div>
+ <div id="defenseModeOptions"><button id="soloDefenseBtn" class="btn primary">혼자 디펜스 시작</button><button id="createRoomBtn" class="btn secondary">친구와 1대1 방 만들기</button></div>
+ <div id="attackModeOptions" hidden><label for="roomCodeInput" class="subtle" style="display:block;margin:10px 0 5px">친구가 공유한 방 코드</label><input id="roomCodeInput" type="text" autocomplete="off" spellcheck="false" placeholder="예: abc123xyz" style="width:100%;padding:12px;border-radius:9px;border:1px solid #3d5778;background:#091522;color:#edf5ff;font-size:15px"><button id="joinRoomBtn" class="btn primary">공격 역할로 방 참가</button></div>
+ <p id="modeStatus" class="subtle" style="margin-top:12px">1대1 대전은 두 플레이어 모두 인터넷 연결이 필요해요. 공격 플레이어가 유닛을 보내고, 방어 플레이어가 3분 동안 코어를 지키면 승리합니다. 파일은 따로 다운로드해도 방 코드로 연결할 수 있어요.</p>
+ </div></div>
+<div id="pvpWaitModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="pvpWaitTitle"><div class="modalbox" style="max-width:620px">
+ <h2 id="pvpWaitTitle">🌐 1대1 대전 연결</h2><p id="pvpWaitText">방 연결을 준비하고 있어요.</p>
+ <div id="roomCodeBox" style="display:flex;gap:8px;align-items:center;margin:14px 0"><code id="roomCodeDisplay" style="flex:1;overflow-wrap:anywhere;padding:12px;background:#07111d;border:1px solid #34516f;border-radius:9px;font-size:17px;font-weight:800;letter-spacing:.6px">연결 준비 중…</code><button id="copyRoomCode" class="btn secondary" style="width:auto;margin:0">코드 복사</button><button id="shareRoomLink" class="btn primary" style="width:auto;margin:0">초대 링크 공유</button></div>
+ <p id="pvpNetworkStatus" class="subtle">인터넷 연결 상태를 확인하고 있어요.</p><button id="cancelNetworkBtn" class="btn secondary">취소하고 돌아가기</button>
+ </div></div>
+<div id="mapModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="mapTitle"><div class="modalbox"><h2 id="mapTitle">🗺️ 전장 배경 선택</h2><p>난이도 선택을 마쳤어요. 이번 작전에서 사용할 전장 테마를 골라 주세요. 경로와 전술은 유지되며 배경 분위기와 색감이 바뀝니다.</p><div class="mapgrid"><button class="mappick active" data-map="crystal"><div class="mapthumb" style="background:linear-gradient(135deg,#102d46,#205a70)">💎 ✦ 💎</div><b>수정 협곡</b><span>푸른 수정과 에너지 지형</span></button><button class="mappick" data-map="desert"><div class="mapthumb" style="background:linear-gradient(135deg,#5b3825,#d19a52)">☀️ ◈ ☀️</div><b>황혼 사막</b><span>모래빛 지대와 고대 유적</span></button><button class="mappick" data-map="volcanic"><div class="mapthumb" style="background:linear-gradient(135deg,#351b2a,#a64035)">🌋 ◆ 🌋</div><b>화산 지대</b><span>용암빛 균열과 붉은 안개</span></button><button class="mappick" data-map="arctic"><div class="mapthumb" style="background:linear-gradient(135deg,#183c57,#b1e5ef)">❄️ ✧ ❄️</div><b>빙결 평원</b><span>얼음 결정과 차가운 광원</span></button></div><button id="beginSelectedMap" class="btn primary">선택한 전장으로 출격</button></div></div>
+<div id="chestModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="chestTitle"><div class="modalbox chestbox"><h2 id="chestTitle">🏆 클리어 전용 보급 상자</h2><p id="chestDesc">15단계 캠페인을 완수했어요! 상자를 열어 클리어 전용 포탑을 뽑아 보세요.</p><span id="chestIcon" class="chest">🎁</span><div id="chestResult" class="chestresult"></div><button id="openChestBtn" class="btn primary">🔓 보상 상자 열기</button><button id="chestContinueBtn" class="btn secondary" style="display:none">새 작전 시작</button></div></div>
+<div id="relicModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="relicTitle"><div class="modalbox"><h2 id="relicTitle">✨ 코어 유물 선택</h2><p id="relicDesc">이번 작전에 도움이 될 영구 강화 하나를 선택하세요.</p><div id="relicCards" class="relics"></div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.5/dist/peerjs.min.js"></script>
+<script>
+(()=>{
+'use strict';
+const canvas=document.getElementById('game'),ctx=canvas.getContext('2d'),W=900,H=600;
+const $=id=>document.getElementById(id),CORE={x:838,y:300};
+const ui={gold:$('gold'),hp:$('hp'),stage:$('stage'),wave:$('wave'),kills:$('kills'),status:$('gameStatus'),selection:$('selection'),upgrade:$('upgradeBtn'),sell:$('sellBtn'),branches:$('branchChoices'),log:$('log'),overlay:$('overlay'),relicModal:$('relicModal')};
+const specs={
+ gun:{name:'기관포',emoji:'🔫',cost:120,range:145,damage:12,rate:.36,color:'#52f0da',desc:'빠른 연사. 러너와 기본 적 처리에 강함.'},
+ cannon:{name:'캐논포',emoji:'💣',cost:180,range:158,damage:35,rate:1.25,color:'#ff9b71',splash:60,desc:'폭발 범위 피해. 보호막을 부수는 데 효과적.'},
+ frost:{name:'냉각포',emoji:'❄️',cost:160,range:142,damage:8,rate:.58,color:'#82caff',slow:.43,desc:'적을 둔화. 위상 망령을 공격할 수 있음.'},
+ laser:{name:'레이저포',emoji:'⚡',cost:240,range:205,damage:30,rate:.76,color:'#c29aff',desc:'장갑을 관통하고 위상 망령에도 피해를 줌.'},
+ prism:{name:'프리즘 포탑',emoji:'🔮',cost:320,range:190,damage:42,rate:.88,color:'#ff75e8',desc:'클리어 보급 상자에서만 획득. 고위력 광자탄을 발사합니다.'},
+ arc:{name:'아크 포탑',emoji:'🌩️',cost:290,range:175,damage:24,rate:.55,color:'#8da8ff',desc:'클리어 보급 상자에서만 획득. 전류가 튀는 빠른 연사 포탑입니다.'},
+ nova:{name:'노바 포탑',emoji:'🌟',cost:360,range:165,damage:68,rate:1.45,color:'#ffce70',splash:48,desc:'클리어 보급 상자에서만 획득. 강력한 별빛 폭발을 일으킵니다.'}
+};
+// Core game state (restored so rendering and controls initialize correctly).
+let gold=700,hp=35,maxHp=35,stage=1,waveInStage=0,stageWaves=4,globalWave=0,kills=0,energy=0,gameSpeed=1;
+let turrets=[],enemies=[],bullets=[],particles=[],skillRings=[],selectedType=null,selectedTurret=null,spawning=false,spawnLeft=0,spawnTimer=0,gameOver=false,last=0,elapsed=0,stageClearReady=false,overdriveUntil=0,dragWeapon=null,dragTower=null,mapAction=null,mouse={x:0,y:0,inside:false},waveWasActive=false;
+let bonusDamage=1,bonusAttackSpeed=1,bonusRange=0,rewardMultiplier=1,energyMultiplier=1,costDiscount=0,relicNames=[];
+let relicOptions=[],upgradeChoosing=false;
+let difficulty='normal',difficultyMultiplier=2;
+let gameMode='solo-defense';
+const pvp={role:null,peer:null,conn:null,active:false,attackEnergy:420,lastSnapshot:0,lastAttackAt:0,roomCode:'',joining:false,matchStartedAt:0,winner:null};
+const ATTACK_COST={grunt:45,runner:65,tank:115,phase:85,shield:95,healer:100,boss:260};
+function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
+function fmt(n){return Math.floor(n).toLocaleString('ko-KR')}
+function note(s){ui.log.textContent=s}
+function pathLength(path){let n=0;for(let i=1;i<path.length;i++)n+=Math.hypot(path[i][0]-path[i-1][0],path[i][1]-path[i-1][1]);return n}
+function pointOnPath(path,t){let left=t;for(let i=1;i<path.length;i++){const a=path[i-1],b=path[i],len=Math.hypot(b[0]-a[0],b[1]-a[1]);if(left<=len){const f=len?left/len:0;return{x:a[0]+(b[0]-a[0])*f,y:a[1]+(b[1]-a[1])*f}}left-=len}const p=path[path.length-1];return{x:p[0],y:p[1]}}
+function distanceToPath(x,y,path){let best=Infinity;for(let i=1;i<path.length;i++){const a=path[i-1],b=path[i],dx=b[0]-a[0],dy=b[1]-a[1],den=dx*dx+dy*dy,u=den?Math.max(0,Math.min(1,((x-a[0])*dx+(y-a[1])*dy)/den)):0;best=Math.min(best,Math.hypot(x-(a[0]+u*dx),y-(a[1]+u*dy)))}return best}
+function distanceToAnyPath(x,y){return Math.min(...pathsFor().map(path=>distanceToPath(x,y,path)))}
+// Each entry is a different map layout. A new layout is selected after every cleared wave.
+// Each cleared stage adds one entrance lane: Stage 1 = 1, Stage 2 = 2, Stage 3 = 3, Stage 4 = 4, Stage 5+ = 5.
+const MAP_ENTRIES={
+ 1:[
+  [{x:-30,y:300}],
+  [{x:-30,y:180}],
+  [{x:145,y:-30}]
+ ],
+ 2:[
+  [{x:-30,y:120},{x:-30,y:480}],
+  [{x:-30,y:75},{x:-30,y:525}],
+  [{x:145,y:-30},{x:760,y:630}]
+ ],
+ 3:[
+  [{x:-30,y:65},{x:-30,y:300},{x:-30,y:535}],
+  [{x:-30,y:45},{x:-30,y:245},{x:-30,y:555}],
+  [{x:115,y:-30},{x:-30,y:330},{x:780,y:630}]
+ ],
+ 4:[
+  [{x:-30,y:55},{x:-30,y:185},{x:-30,y:415},{x:-30,y:545}],
+  [{x:-30,y:35},{x:-30,y:220},{x:-30,y:380},{x:-30,y:570}],
+  [{x:110,y:-30},{x:-30,y:210},{x:-30,y:430},{x:780,y:630}]
+ ],
+ 5:[
+  [{x:-30,y:35},{x:-30,y:155},{x:-30,y:275},{x:-30,y:425},{x:-30,y:565}],
+  [{x:-30,y:20},{x:-30,y:185},{x:-30,y:330},{x:-30,y:475},{x:-30,y:580}],
+  [{x:105,y:-30},{x:-30,y:150},{x:-30,y:300},{x:-30,y:450},{x:790,y:630}]
+ ]
+};
+function buildMap(entries,variant){
+ return entries.map((entry,i)=>{
+  const {x,y}=entry;
+  const tail=[[410,300],[690,300],[838,300]];
+  if(y<0){
+   const nearY=[78,112,66][variant];
+   const turnX=x>500?[690,650,720][variant]:[105,150,195,235,275][i%5];
+   const bendY=[160+i*25,235-i*24,135+i*48][variant];
+   return [[x,y],[x,nearY],[turnX,nearY],[turnX,bendY],[330,bendY],...tail];
+  }
+  if(y>H){
+   const nearY=[522,488,548][variant];
+   const turnX=x>500?[690,650,720][variant]:[105,150,195,235,275][i%5];
+   const bendY=[435-i*25,350+i*24,470-i*48][variant];
+   return [[x,y],[x,nearY],[turnX,nearY],[turnX,bendY],[330,bendY],...tail];
+  }
+  const turnX=variant===0?135:variant===1?105+i*34:185-i*15;
+  let bendY;
+  if(variant===0) bendY=y<250?Math.min(250,y+85):y>350?Math.max(350,y-85):300;
+  else if(variant===1) bendY=y<270?Math.min(270,y+130):y>330?Math.max(330,y-130):300;
+  else if(y<220) bendY=Math.min(265,y+150);
+  else if(y>380) bendY=Math.max(335,y-150);
+  else bendY=i%2===0?150:450;
+  const midX=variant===0?310:variant===1?280:340;
+  return [[x,y],[turnX,y],[turnX,bendY],[midX,bendY],...tail];
+ });
+}
+const PATHS=Object.fromEntries(Object.entries(MAP_ENTRIES).map(([count,variants])=>[
+ Number(count),variants.map((entries,i)=>buildMap(entries,i))
+]));
+let mapVariant=0;
+let mapTheme='crystal';
+let started=false; // 선택한 전장으로 출격했는지 추적
+const EXCLUSIVE_TURRETS=['prism','arc','nova'];
+let unlockedTurrets=[];
+try{unlockedTurrets=JSON.parse(localStorage.getItem('coreDefenseUnlockedTurrets')||'[]').filter(k=>EXCLUSIVE_TURRETS.includes(k))}catch(e){unlockedTurrets=[]}
+let chestOpened=false;
+function pathsFor(level=stage){const lanes=Math.min(5,Math.max(1,level));const variants=PATHS[lanes]||PATHS[5];return variants[mapVariant%variants.length]}
+function pathLabel(){return `${pathsFor().length}개 진입 경로`}
+// Free placement: keep turrets off enemy lanes/core and leave about two turret-widths of room.
+const MIN_TURRET_GAP=80;
+function isPositionValid(x,y,except=null){if(x<28||x>W-32||y<28||y>H-28)return false;if(distanceToAnyPath(x,y)<43)return false;if(Math.hypot(x-CORE.x,y-CORE.y)<76)return false;return turrets.every(t=>t===except||Math.hypot(t.x-x,t.y-y)>=MIN_TURRET_GAP)}
+function nearestFreePoint(x,y,except=null){let best=null,bd=Infinity;for(let yy=32;yy<=H-32;yy+=8)for(let xx=32;xx<=W-32;xx+=8){if(!isPositionValid(xx,yy,except))continue;const d=Math.hypot(x-xx,y-yy);if(d<bd){bd=d;best={x:xx,y:yy}}}return bd<=30?best:null}
+function padOccupied(){return false}
+function padSafe(){return false}
+function nearestPad(x,y){return nearestFreePoint(x,y)}
+function clientToCanvas(cx,cy){const r=canvas.getBoundingClientRect();if(cx<r.left||cx>r.right||cy<r.top||cy>r.bottom)return null;return{x:(cx-r.left)*W/r.width,y:(cy-r.top)*H/r.height}}
+function getBuildCost(type){return Math.max(1,Math.round(specs[type].cost*(1-costDiscount)))}
+function getUpgradeCost(t){return Math.max(1,Math.round(t.upgradeCost*(1-costDiscount)))}
+function turretAt(p){return [...turrets].reverse().find(t=>dist(t,p)<24)||null}
+function synergyCount(t){return turrets.filter(o=>o!==t&&o.type!==t.type&&dist(t,o)<=145).length}
+function synergyMult(t){return 1+Math.min(.24,synergyCount(t)*.12)}
+function effectiveDamage(t){return t.damage*bonusDamage*synergyMult(t)}
+function sync(){
+ ui.gold.textContent=fmt(gold);ui.hp.textContent=`${hp} / ${maxHp}`;ui.stage.textContent=`${stage} / 15`;ui.wave.textContent=`${waveInStage} / ${stageWaves}`;ui.kills.textContent=kills;
+ $('stageProgress').style.width=`${stage/15*100}%`;$('routePill').textContent=pathLabel();$('energyFill').style.width=`${energy}%`;$('energyText').textContent=`${Math.floor(energy)} / 100`;
+ document.querySelectorAll('.weapon[data-type]').forEach(b=>{const type=b.dataset.type;b.classList.toggle('active',selectedType===type);b.querySelector('b').textContent=`${specs[type].name} · ${fmt(getBuildCost(type))}G`;b.disabled=gold<getBuildCost(type)||gameOver;});
+ document.querySelectorAll('.weapon[data-exclusive="true"]').forEach(b=>{b.hidden=!unlockedTurrets.includes(b.dataset.type)});
+ $('waveBtn').disabled=(pvp.active&&pvp.role==='defender')||spawning||enemies.length>0||gameOver||stageClearReady;$('waveBtn').textContent=(pvp.active&&pvp.role==='defender')?'⚔️ 1대1 대전 중':stageClearReady?'유물 선택 중':waveInStage===0?'▶ 웨이브 시작':`▶ 다음 웨이브 (${waveInStage+1}/${stageWaves})`;
+ $('speedBtn').textContent=gameSpeed===1?'⏩ 2배속 켜기':gameSpeed===2?'⏩ 3배속 켜기':'▶ 1배속으로 돌아가기';$('speedBtn').disabled=!!pvp.active;$('speedBtn').classList.toggle('active',gameSpeed>1);$('speedBtn').setAttribute('aria-pressed',gameSpeed>1?'true':'false');
+ $('cancelBtn').disabled=!selectedType;$('empBtn').disabled=energy<50||gameOver;$('overdriveBtn').disabled=energy<60||gameOver;
+ ui.upgrade.disabled=!selectedTurret||gameOver||(selectedTurret.level>=15)||(gold<getUpgradeCost(selectedTurret))||(pvp.active&&pvp.role==='attacker');ui.sell.disabled=!selectedTurret||gameOver||(pvp.active&&pvp.role==='attacker');
+ if(pvp.active&&pvp.role==='attacker'){ $('attackEnergyText').textContent=`${Math.floor(pvp.attackEnergy)} / 600`; document.querySelectorAll('.attack-unit').forEach(b=>{b.disabled=gameOver||pvp.attackEnergy<(ATTACK_COST[b.dataset.kind]||999);}); }
+ if(selectedTurret){const t=selectedTurret,s=specs[t.type],sy=synergyCount(t);ui.selection.innerHTML=`<h3>${s.emoji} ${s.name} <span class="leveltag">Lv.${t.level}/15</span></h3><p>${s.desc}</p><p>공격력 ${Math.round(effectiveDamage(t))} · 사거리 ${Math.round(t.range)} · 연사 ${Math.round((1/t.rate)*10)/10}/초</p><p>선택 강화: 화력 ${t.upgrades?.power||0} · 사거리 ${t.upgrades?.range||0} · 속사 ${t.upgrades?.speed||0}회 · 공명 파트너 ${sy}기</p><p>강화 비용 ${fmt(getUpgradeCost(t))}G · 위치 (${Math.round(t.x)}, ${Math.round(t.y)})</p>`;ui.upgrade.textContent=t.level>=15?'최고 레벨 도달':upgradeChoosing?'강화 방향을 아래에서 선택':`⬆️ 강화 방향 선택 (${fmt(getUpgradeCost(t))}G)`;ui.branches.style.display=upgradeChoosing?'grid':'none'}else{upgradeChoosing=false;ui.selection.innerHTML='<h3>포탑을 선택하세요</h3><p>설치한 포탑을 클릭하고, 골드를 사용해 원하는 능력치를 직접 강화하세요.</p>';ui.upgrade.textContent='⬆️ 강화 방향 선택';ui.branches.style.display='none'}
+}
+function chooseEnemyKind(isBoss){if(isBoss)return'boss';const pool=[['grunt',34],['runner',stage>=2?16:0],['tank',stage>=3?16:0],['phase',stage>=2?12:0],['shield',stage>=3?13:0],['healer',stage>=5?7:0],['splitter',stage>=6?9:0]];let total=pool.reduce((s,p)=>s+p[1],0),roll=Math.random()*total;for(const [kind,w] of pool){roll-=w;if(roll<=0)return kind}return'grunt'}
+function spawnEnemy(forcedKind=null){const isBoss=waveInStage===stageWaves&&spawnLeft===1;const kind=forcedKind||chooseEnemyKind(isBoss);const data={
+ grunt:{hp:54,speed:43,r:12,reward:12,color:'#ed6079'},runner:{hp:42,speed:82,r:10,reward:15,color:'#ffd166'},tank:{hp:190,speed:26,r:17,reward:25,color:'#a4b8cd'},phase:{hp:87,speed:54,r:12,reward:22,color:'#b88aff'},shield:{hp:95,speed:34,r:14,reward:25,color:'#5bcfff',shield:125},healer:{hp:105,speed:33,r:14,reward:27,color:'#74e6a1'},splitter:{hp:100,speed:38,r:15,reward:23,color:'#f19aff'},boss:{hp:500+stage*80,speed:23,r:24,reward:150+stage*10,color:'#ff925c'}
+ }[kind];const scale=(1+(stage-1)*.15+globalWave*.012)*difficultyMultiplier;const routes=pathsFor(),lane=Math.floor(Math.random()*routes.length),path=routes[lane];const weakTo=kind==='boss'?['gun','cannon','frost','laser'][(globalWave+stage)%4]:null;
+ const e={kind,path,lane,progress:0,x:path[0][0],y:path[0][1],hp:data.hp*scale,maxHp:data.hp*scale,speed:data.speed*(1+stage*.012)*(difficulty==='hard'?1.12:difficulty==='normal'?1.06:1),r:data.r,reward:Math.round(data.reward*(1+stage*.08)*rewardMultiplier*difficultyMultiplier),color:data.color,slow:1,stun:0,flash:0,dead:false,anim:Math.random()*10,shield:(data.shield||0)*scale,maxShield:(data.shield||0)*scale,healTimer:1.5,weakTo,mini:false,heading:0,sway:Math.random()*Math.PI*2,sprintTimer:1.2+Math.random()*1.5,sprinting:0,phaseTimer:2.2+Math.random()*1.2,phaseFx:0,pulse:Math.random()*Math.PI*2,healPulse:0,hitKick:0,armorPulse:Math.random()*Math.PI*2,bossRush:0,bossWindup:0,bossRushCd:2.5+Math.random()*2.5,roar:0,lastHit:0};enemies.push(e);if(!forcedKind){spawnLeft--;if(spawnLeft<=0)spawning=false;}
+}
+function relocateTurretsForMap(){
+ // Re-evaluate every saved turret against the newly generated lanes. Temporarily
+ // remove all turrets so the placement solver can reserve fresh, non-overlapping spots.
+ const old=[...turrets]; turrets=[];
+ for(const t of old){
+  let p=nearestFreePoint(t.x,t.y);
+  if(!p){let best=null,bd=Infinity;for(let k=0;k<450;k++){const q={x:34+Math.random()*(W-68),y:34+Math.random()*(H-68)};if(isPositionValid(q.x,q.y)){const d=Math.hypot(q.x-t.x,q.y-t.y);if(d<bd){bd=d;best=q}}}p=best}
+  if(p){t.x=p.x;t.y=p.y;t.flash=.7;turrets.push(t)}else{turrets.push(t)}
+ }
+ if(selectedTurret&&!turrets.includes(selectedTurret))selectedTurret=null;
+ note('맵 경로가 변경되어 기존 포탑을 새 경로에 맞는 안전한 위치로 자동 재배치했어요.');sync();
+}
+function startWave(){if((pvp.active&&pvp.role==='defender')||spawning||enemies.length||gameOver||stageClearReady)return;if(waveInStage>=stageWaves)return;waveInStage++;globalWave++;spawning=true;waveWasActive=true;spawnLeft=7+stage+waveInStage*2;spawnTimer=0;note(`단계 ${stage} · 웨이브 ${waveInStage}/${stageWaves}. 적 ${spawnLeft}기 접근 중. 약점 아이콘을 확인하세요.`);ui.status.textContent=`웨이브 ${waveInStage} 진행 중 · ${pathsFor().length}개 경로`;sync()}
+function advanceStage(){stage++;waveInStage=0;stageWaves=3+stage;stageClearReady=false;const grant=230+stage*115;gold+=grant;hp=Math.min(maxHp,hp+Math.min(7,Math.floor(stage/2)+1));energy=Math.min(100,energy+15);relocateTurretsForMap();note(`단계 ${stage} 진입! 보급 ${fmt(grant)}G와 코어 수리 완료. ${pathLabel()}를 방어하세요.`);ui.status.textContent=`단계 ${stage} 준비`;sync()}
+function makeTurret(type,pos){const cost=getBuildCost(type);if(gold<cost){note('골드가 부족합니다.');return false}if(EXCLUSIVE_TURRETS.includes(type)&&!unlockedTurrets.includes(type)){note('이 포탑은 캠페인 클리어 보급 상자에서만 획득할 수 있어요.');return false}if(!isPositionValid(pos.x,pos.y)){note('경로와 포탑 간격을 확인해 다른 위치를 골라 주세요.');return false}gold-=cost;upgradeChoosing=false;const s=specs[type],t={type,x:pos.x,y:pos.y,level:1,damage:s.damage,range:s.range+bonusRange,rate:s.rate,cool:Math.random()*.25,upgradeCost:Math.round(s.cost*.72),branch:null,upgrades:{power:0,range:0,speed:0},angle:-Math.PI/2,kick:0,flash:.5};turrets.push(t);selectedTurret=t;selectedType=null;note(`${s.name}을(를) 자유 배치했어요. 다른 종류의 포탑과 연결해 공명을 만드세요.`);ui.status.textContent='포탑 설치 완료';sync();return true}
+function upgrade(which){const t=selectedTurret;if(!t||gameOver||t.level>=15)return;const cost=getUpgradeCost(t);if(gold<cost){note('골드가 부족합니다.');sync();return}if(!which){upgradeChoosing=true;sync();note('강화 방향을 직접 선택하세요. 선택한 능력치만 강화됩니다.');return}gold-=cost;t.level++;t.upgrades=t.upgrades||{power:0,range:0,speed:0};if(which==='power'){t.damage*=1.30;t.upgrades.power++}else if(which==='range'){t.range+=18;t.upgrades.range++}else if(which==='speed'){t.rate=Math.max(.12,t.rate*.78);t.upgrades.speed++}t.upgradeCost=Math.round(t.upgradeCost*1.36);t.flash=.7;upgradeChoosing=false;addBurst(t.x,t.y,specs[t.type].color,14);const labels={power:'화력 +30%',range:'사거리 +18',speed:'공격 속도 +22%'};note(`${specs[t.type].name} Lv.${t.level} 강화 완료: ${labels[which]}. 다음 강화도 원하는 방향으로 고를 수 있어요.`);sync()}
+function branch(which){upgrade(which)}
+function sell(){if(!selectedTurret)return;const t=selectedTurret;gold+=Math.floor(specs[t.type].cost*.45+(t.level-1)*specs[t.type].cost*.16);turrets=turrets.filter(q=>q!==t);selectedTurret=null;note('포탑을 판매해 골드를 일부 환급받았습니다.');sync()}
+function canDamage(t,e){if(e.kind==='phase'&&!['frost','laser'].includes(t.type))return false;if(e.kind==='shield'&&e.shield>0&&!['cannon','frost'].includes(t.type))return false;return true}
+function damageMultiplier(type,e){if(e.kind==='phase')return type==='frost'?1.45:type==='laser'?1.25:0;if(e.kind==='shield'&&e.shield>0)return 1;if(e.kind==='tank')return type==='laser'?1.85:type==='cannon'?1.35:type==='gun'?.38:.62;if(e.kind==='runner')return type==='gun'?1.5:type==='cannon'?.55:type==='frost'?.85:1;if(e.kind==='boss')return type===e.weakTo?1.95:.76;if(e.kind==='healer')return type==='laser'?1.25:1;return 1}
+function applyDamage(e,raw,type){if(!e||e.dead)return;if(e.kind==='phase'&&!['frost','laser'].includes(type)){addBurst(e.x,e.y,'#d6b9ff',2);return}if(e.kind==='shield'&&e.shield>0&&!['cannon','frost'].includes(type)){addBurst(e.x,e.y,'#5bcfff',2);return}let dmg=raw*damageMultiplier(type,e);if(e.kind==='shield'&&e.shield>0){const absorbed=Math.min(e.shield,dmg);e.shield-=absorbed;dmg-=absorbed;if(e.shield>0){e.flash=.08;e.hitKick=.08;e.lastHit=elapsed;return}}if(dmg>0){e.hp-=dmg;e.flash=.12;e.hitKick=.14;e.lastHit=elapsed;if(e.hp<=0)killEnemy(e)}}
+function killEnemy(e){if(e.dead)return;e.dead=true;kills++;gold+=e.reward;energy=Math.min(100,energy+(e.kind==='boss'?25:e.kind==='tank'||e.kind==='shield'?9:7)*energyMultiplier);addBurst(e.x,e.y,e.color,e.kind==='boss'?32:12);if(e.kind==='splitter'&&!e.mini){for(let i=0;i<2;i++){const pr=Math.max(0,e.progress-3);const p=pointOnPath(e.path,pr);enemies.push({kind:'runner',path:e.path,lane:e.lane,progress:pr,x:p.x,y:p.y,hp:24+stage*2,maxHp:24+stage*2,speed:72,r:7,reward:4,color:'#f4b7ff',slow:1,stun:0,flash:0,dead:false,anim:Math.random()*6,shield:0,maxShield:0,healTimer:9,weakTo:null,mini:true})}}}
+function addBurst(x,y,color,count=8){for(let i=0;i<count;i++){const a=Math.random()*Math.PI*2,v=25+Math.random()*130;particles.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,life:.22+Math.random()*.52,max:.74,color,size:1.5+Math.random()*3})}}
+// Procedural audio: browser-generated cinematic drone and restrained artillery-like shots.
+let audioCtx=null,audioOn=true,bgmNodes=[],bgmTimer=null,lastShotSound=0;
+function ensureAudio(){if(!audioCtx){const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;audioCtx=new AC()}if(audioCtx.state==='suspended')audioCtx.resume();return audioCtx}
+function tone(freq,dur,type,gain,when=0,slide=0){const a=ensureAudio();if(!a||!audioOn)return;const o=a.createOscillator(),g=a.createGain();o.type=type;o.frequency.setValueAtTime(freq,a.currentTime+when);if(slide)o.frequency.exponentialRampToValueAtTime(Math.max(20,freq*slide),a.currentTime+when+dur);g.gain.setValueAtTime(.0001,a.currentTime+when);g.gain.exponentialRampToValueAtTime(Math.max(.0002,gain),a.currentTime+when+.012);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+when+dur);o.connect(g);g.connect(a.destination);o.start(a.currentTime+when);o.stop(a.currentTime+when+dur+.03)}
+let shotNoiseBuffer=null;
+function softShotNoise(duration,gain,cutoff=1500){const a=ensureAudio();if(!a||!audioOn)return;try{if(!shotNoiseBuffer){shotNoiseBuffer=a.createBuffer(1,Math.floor(a.sampleRate*.22),a.sampleRate);const d=shotNoiseBuffer.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*(.8*(1-i/d.length*.45))}const src=a.createBufferSource(),filter=a.createBiquadFilter(),amp=a.createGain();src.buffer=shotNoiseBuffer;filter.type='lowpass';filter.frequency.value=cutoff;filter.Q.value=.65;amp.gain.setValueAtTime(.0001,a.currentTime);amp.gain.exponentialRampToValueAtTime(Math.max(.0002,gain),a.currentTime+.004);amp.gain.exponentialRampToValueAtTime(.0001,a.currentTime+duration);src.connect(filter);filter.connect(amp);amp.connect(a.destination);src.start();src.stop(a.currentTime+duration+.015)}catch(e){}}
+function cannonSound(type){if(!audioOn)return;const now=performance.now();if(now-lastShotSound<80)return;lastShotSound=now;
+ // Short, rounded arcade weapon sounds: softened transients and restrained bass instead of harsh square-wave blasts.
+ if(type==='cannon'||type==='nova'){softShotNoise(.105,.025,780);tone(112,.19,'sine',.045,0,.48);tone(72,.12,'triangle',.018,.012,.72)}
+ else if(type==='gun'||type==='arc'){softShotNoise(.052,.016,1850);tone(205,.065,'triangle',.026,0,.58);tone(118,.06,'sine',.009,.012,.82)}
+ else if(type==='laser'||type==='prism'){tone(680,.095,'sine',.018,0,.62);tone(930,.035,'sine',.006,.008,.8)}
+ else{softShotNoise(.07,.012,1050);tone(285,.09,'sine',.014,0,.58)}
+}
+function startBgm(){const a=ensureAudio();if(!a||!audioOn||bgmTimer)return;const playBar=()=>{if(!audioOn||!audioCtx)return;const notes=[55,65.41,73.42,82.41];const root=notes[Math.floor((elapsed/8)%notes.length)];/* 잔잔한 앰비언트 BGM: 부드러운 파형, 낮은 음량, 느린 코드 변화 */tone(root,6.1,'sine',.0055,0,1.005);tone(root*2,5.5,'triangle',.0028,.12,1.003);tone(root*1.5,4.9,'sine',.0018,.25,1.002);tone(root*3,4.2,'sine',.0009,.4,.999);};playBar();bgmTimer=setInterval(playBar,6200)}
+function stopBgm(){if(bgmTimer){clearInterval(bgmTimer);bgmTimer=null}}
+function toggleAudio(){audioOn=!audioOn;if(audioOn){ensureAudio();startBgm();$('audioBtn').textContent='🔊 사운드 켜짐'}else{stopBgm();$('audioBtn').textContent='🔇 사운드 꺼짐'}$('audioBtn').setAttribute('aria-pressed',String(audioOn));note(audioOn?'배경 음악과 포탑 사운드를 켰어요.':'배경 음악과 포탑 사운드를 껐어요.')}
+function fire(t,e){cannonSound(t.type);const s=specs[t.type],over=elapsed<overdriveUntil?1.7:1;t.cool=t.rate/(elapsed<overdriveUntil?1.7:1)/bonusAttackSpeed;t.angle=Math.atan2(e.y-t.y,e.x-t.x);t.kick=1;t.flash=.12;const dmg=t.damage*over*bonusDamage*synergyMult(t),mx=t.x+Math.cos(t.angle)*23,my=t.y+Math.sin(t.angle)*23;addBurst(mx,my,s.color,t.type==='cannon'||t.type==='nova'?9:t.type==='laser'?5:3);if(t.type==='cannon'||t.type==='nova'){bullets.push({x:mx,y:my,tx:e.x,ty:e.y,damage:dmg,splash:(s.splash||48)+t.level*1.3,type:t.type,speed:t.type==='nova'?300:420,color:s.color,dead:false})}else if(t.type==='laser'){applyDamage(e,dmg*1.05,t.type);bullets.push({x:t.x,y:t.y,tx:e.x,ty:e.y,life:.19,beam:true,color:s.color,dead:false});addBurst(e.x,e.y,s.color,8);skillRings.push({x:e.x,y:e.y,r:5,life:.18,max:.18,color:s.color})}else{bullets.push({x:mx,y:my,target:e,damage:dmg,type:t.type,speed:t.type==='frost'?400:t.type==='arc'?610:t.type==='prism'?480:535,color:s.color,slow:s.slow||0,dead:false});if(t.type==='frost')skillRings.push({x:mx,y:my,r:3,life:.2,max:.2,color:'#a9f5ff'});if(t.type==='arc')addBurst(mx,my,'#dbe6ff',6)}}
+function useEmp(){if(gameOver||energy<50)return;energy-=50;for(const e of enemies){e.stun=Math.max(e.stun,2.5);e.flash=.25;addBurst(e.x,e.y,'#8cfaff',4)}skillRings.push({x:450,y:300,r:0,life:.7,max:.7,color:'#72e8ff'});note('EMP 발동! 현재 전장의 적을 2.5초 동안 정지시켰어요.');sync()}
+function useOverdrive(){if(gameOver||energy<60)return;energy-=60;overdriveUntil=elapsed+6;skillRings.push({x:450,y:300,r:0,life:.9,max:.9,color:'#e0a3ff'});for(const t of turrets)addBurst(t.x,t.y,'#d7a5ff',5);note('오버드라이브 발동! 6초 동안 모든 포탑이 강화됩니다.');sync()}
+const RELICS=[
+ {id:'damage',icon:'💠',name:'프리즘 코어',desc:'모든 포탑의 공격력이 영구적으로 12% 증가합니다.',tag:'공격력 +12%',apply:()=>bonusDamage*=1.12},
+ {id:'range',icon:'🔭',name:'항성 렌즈',desc:'현재와 앞으로 설치할 포탑의 사거리가 12 증가합니다.',tag:'사거리 +12',apply:()=>{bonusRange+=12;turrets.forEach(t=>t.range+=12)}},
+ {id:'speed',icon:'⚙️',name:'고속 회로',desc:'모든 포탑의 공격 속도가 영구적으로 10% 증가합니다.',tag:'공격 속도 +10%',apply:()=>bonusAttackSpeed*=1.10},
+ {id:'salvage',icon:'🪙',name:'회수 드론',desc:'이후 적 처치 보상이 15% 증가하고 지금 180G를 받습니다.',tag:'보상 +15% · 180G',apply:()=>{rewardMultiplier*=1.15;gold+=180}},
+ {id:'repair',icon:'🧰',name:'수리 나노봇',desc:'코어 체력을 10 회복하고 최대 체력을 3 늘립니다.',tag:'체력 +10 · 최대 +3',apply:()=>{maxHp+=3;hp=Math.min(maxHp,hp+10)}},
+ {id:'capacitor',icon:'🔋',name:'축전 셀',desc:'에너지를 35 얻고, 앞으로 얻는 스킬 에너지가 15% 증가합니다.',tag:'에너지 +35 · 획득 +15%',apply:()=>{energy=Math.min(100,energy+35);energyMultiplier*=1.15}},
+ {id:'fabricator',icon:'🛠️',name:'분자 제조기',desc:'이후 포탑 설치와 강화 비용이 10% 저렴해집니다.',tag:'비용 -10%',apply:()=>costDiscount=Math.min(.4,costDiscount+.10)}
+];
+function showRelicChoice(){const options=[...RELICS].sort(()=>Math.random()-.5).slice(0,3);relicOptions=options;$('relicCards').innerHTML='';$('relicDesc').textContent=stage===15?'최종 방어를 마쳤습니다. 마지막 유물을 선택하면 캠페인이 완료됩니다.':'단계 보상을 받았습니다. 다음 작전 방식을 바꿀 코어 유물 하나를 선택하세요.';for(const r of options){const b=document.createElement('button');b.className='relic';b.innerHTML=`<span class="icon">${r.icon}</span><b>${r.name}</b><span>${r.desc}</span><em>${r.tag}</em>`;b.addEventListener('click',()=>chooseRelic(r));$('relicCards').appendChild(b)}ui.relicModal.classList.add('show')}
+function chooseRelic(r){r.apply();relicNames.push(r.name);ui.relicModal.classList.remove('show');note(`코어 유물 획득: ${r.name}. 이 강화는 이번 작전 동안 유지됩니다.`);if(stage>=15){endGame(true)}else{advanceStage()}}
+function update(dt){if(gameOver)return;elapsed+=dt;if(pvp.active&&pvp.role==='attacker')return;if(pvp.active&&pvp.role==='defender'){pvp.attackEnergy=Math.min(600,pvp.attackEnergy+dt*9);if(pvp.matchStartedAt&&performance.now()-pvp.matchStartedAt>=180000){finishPvpMatch('defender');return;}}if(spawning){spawnTimer-=dt;if(spawnTimer<=0&&spawnLeft>0){spawnEnemy();spawnTimer=Math.max(.23,.72-stage*.018)}}
+ for(const e of enemies){
+  if(e.dead)continue;
+  e.flash=Math.max(0,e.flash-dt);e.hitKick=Math.max(0,(e.hitKick||0)-dt);e.phaseFx=Math.max(0,(e.phaseFx||0)-dt);e.healPulse=Math.max(0,(e.healPulse||0)-dt);e.roar=Math.max(0,(e.roar||0)-dt);e.sprinting=Math.max(0,(e.sprinting||0)-dt);
+  e.pulse=(e.pulse||0)+dt*(e.kind==='runner'?13:e.kind==='boss'?3.3:5.5);e.armorPulse=(e.armorPulse||0)+dt*2.8;
+  if(e.stun>0){e.stun-=dt;continue}
+  e.slow=Math.min(1,e.slow+dt*.25);
+  let pace=1;
+  // Fast scouts briefly surge forward after a visible wind-up.
+  if(e.kind==='runner'){
+   e.sprintTimer=(e.sprintTimer??1)-dt;
+   if(e.sprintTimer<=0&&e.sprinting<=0){e.sprinting=.48;e.sprintTimer=2.25+Math.random()*1.25;addBurst(e.x,e.y,'#ffd166',3)}
+   if(e.sprinting>0)pace=1.72;
+  }
+  // Phase units blink a short distance along their own lane, leaving a violet afterimage.
+  if(e.kind==='phase'){
+   e.phaseTimer=(e.phaseTimer??2)-dt;
+   if(e.phaseTimer<=0&&e.progress<pathLength(e.path)-24){
+    addBurst(e.x,e.y,'#c7a1ff',6);e.progress+=18;e.phaseFx=.42;e.phaseTimer=2.8+Math.random()*1.1;
+   }
+  }
+  // The siege boss telegraphs a brief charge at low health; the glow warns the player.
+  if(e.kind==='boss'){
+   e.bossRushCd=(e.bossRushCd??4)-dt;
+   if(e.bossWindup>0){e.bossWindup-=dt;pace=.52;e.roar=Math.max(e.roar||0,.05);if(e.bossWindup<=0){e.bossRush=.72;addBurst(e.x,e.y,'#ffbd70',14);}}
+   else if(e.bossRush>0){e.bossRush-=dt;pace=1.78;}
+   else if(e.hp<e.maxHp*.68&&e.bossRushCd<=0){e.bossWindup=.72;e.bossRushCd=5.2;addBurst(e.x,e.y,'#ff9b5c',8);}
+  }
+  e.progress+=e.speed*pace*e.slow*dt;
+  const p=pointOnPath(e.path,e.progress),ahead=pointOnPath(e.path,Math.min(pathLength(e.path),e.progress+3));
+  e.heading=Math.atan2(ahead.y-p.y,ahead.x-p.x);
+  const sideAmp=e.kind==='boss'?1.1:e.kind==='tank'?0.25:e.kind==='phase'?2.7:e.kind==='runner'?1.7:1.05;
+  const side=Math.sin(e.pulse+(e.sway||0))*sideAmp;
+  e.x=p.x-Math.sin(e.heading)*side;e.y=p.y+Math.cos(e.heading)*side;
+  e.anim+=dt*(e.kind==='runner'?15:e.kind==='tank'?4.1:e.kind==='boss'?4.3:e.kind==='phase'?9:7.2);
+  if(e.kind==='tank'&&Math.sin(e.armorPulse)<-.97)addBurst(e.x-e.r*.35,e.y+e.r*.45,'#b6c9d9',1);
+  if(e.kind==='healer'){
+   e.healTimer-=dt;
+   if(e.healTimer<=0){e.healTimer=1.2;let target=null,bd=115;
+    for(const other of enemies){if(other===e||other.dead)continue;const d=dist(e,other);if(d<bd&&other.hp<other.maxHp){target=other;bd=d}}
+    if(target){target.hp=Math.min(target.maxHp,target.hp+target.maxHp*.07);target.healPulse=.62;addBurst(target.x,target.y,'#74e6a1',7);e.healPulse=.62;}
+   }
+  }
+  if(e.progress>=pathLength(e.path)){e.dead=true;const leakDamage=e.kind==='boss'?Math.max(4,Math.ceil(stage/3)):e.kind==='tank'?2:1;hp-=Math.ceil(leakDamage*difficultyMultiplier);addBurst(CORE.x,CORE.y,'#ff647e',12);if(hp<=0){hp=0;endGame(false)}}
+ }
+ enemies=enemies.filter(e=>!e.dead);
+ for(const t of turrets){t.cool-=dt;t.kick=Math.max(0,t.kick-dt*5);t.flash=Math.max(0,t.flash-dt);let target=null,best=-1;for(const e of enemies){if(!canDamage(t,e)||dist(t,e)>t.range)continue;if(e.progress>best){best=e.progress;target=e}}if(target){t.angle=Math.atan2(target.y-t.y,target.x-t.x);if(t.cool<=0)fire(t,target)}}
+ for(const b of bullets){if(b.beam){b.life-=dt;continue}if(b.type==='cannon'||b.type==='nova'){const dx=b.tx-b.x,dy=b.ty-b.y,d=Math.hypot(dx,dy),step=b.speed*dt;if(d<=step){addBurst(b.tx,b.ty,b.color,b.type==='nova'?28:18);skillRings.push({x:b.tx,y:b.ty,r:8,life:.38,max:.38,color:b.color});for(const e of enemies){if(dist(e,{x:b.tx,y:b.ty})<b.splash)applyDamage(e,b.damage,b.type)}b.dead=true}else{b.x+=dx/d*step;b.y+=dy/d*step}}else if(!b.target||b.target.dead)b.dead=true;else{const e=b.target,dx=e.x-b.x,dy=e.y-b.y,d=Math.hypot(dx,dy),step=b.speed*dt;if(d<=step+e.r){applyDamage(e,b.damage,b.type);if(b.slow&&e.kind!=='phase')e.slow=Math.min(e.slow,b.slow);if(b.slow&&e.kind==='phase')e.slow=Math.min(e.slow,b.slow);addBurst(e.x,e.y,b.color,b.type==='frost'?9:b.type==='arc'?7:b.type==='prism'?12:3);if(b.type==='frost')skillRings.push({x:e.x,y:e.y,r:4,life:.25,max:.25,color:'#a9f5ff'});if(b.type==='prism')skillRings.push({x:e.x,y:e.y,r:4,life:.22,max:.22,color:'#ff75e8'});b.dead=true}else{b.x+=dx/d*step;b.y+=dy/d*step}}}
+ bullets=bullets.filter(b=>!b.dead&&(!b.beam||b.life>0));for(const p of particles){p.life-=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.975;p.vy*=.975}particles=particles.filter(p=>p.life>0);for(const r of skillRings){r.life-=dt;r.r+=500*dt}skillRings=skillRings.filter(r=>r.life>0);
+ if(waveWasActive&&!spawning&&enemies.length===0){waveWasActive=false;mapVariant=(mapVariant+1)%3;relocateTurretsForMap();note(`웨이브 종료! 다음 전장은 다른 진입 지점과 경로 배치로 재구성됩니다. ${pathLabel()}.`);ui.status.textContent=`전장 재구성 · ${pathLabel()}`}
+ if(!pvp.active&&!spawning&&enemies.length===0&&waveInStage>=stageWaves&&!stageClearReady&&waveInStage>0){stageClearReady=true;const reward=170+stage*50;gold+=reward;energy=Math.min(100,energy+12);note(`단계 ${stage} 방어 성공! 보너스 ${fmt(reward)}G 지급. 코어 유물을 선택하세요.`);ui.status.textContent='방어 성공 · 유물 선택';showRelicChoice()}
+ if(hp<=0&&!gameOver)endGame(false);sync()}
+function endGame(win){gameOver=true;spawning=false;ui.overlay.classList.add('show');$('overlayTitle').textContent=win?'🏆 공명 작전 완전 정복!':'💥 코어가 파괴됐어요';$('overlayText').textContent=win?`15단계 캠페인 완료! ${globalWave}웨이브, ${kills}기 처치. 획득 유물: ${relicNames.join(', ')||'없음'}.`:`${stage}단계 ${waveInStage}웨이브까지 도달했고 ${kills}기를 처치했어요. 적의 약점에 맞는 포탑을 배치하고 유물 조합을 바꿔 보세요.`;if(win){$('chestModal').classList.add('show');$('chestIcon').textContent='🎁';$('chestIcon').classList.remove('opening');$('chestResult').textContent='';$('chestDesc').textContent='15단계 캠페인을 완수했어요! 상자를 열어 클리어 전용 포탑을 뽑아 보세요.';$('openChestBtn').textContent='🔓 보상 상자 열기';$('openChestBtn').style.display='block';$('openChestBtn').disabled=false;$('chestContinueBtn').style.display='none';chestOpened=false}ui.status.textContent='작전 종료';sync();if(pvp.active&&pvp.role==='defender'){pvp.winner=hp<=0?'attacker':'defender';sendPvpSnapshot(true)}}
+function openRewardChest(){if(chestOpened)return;chestOpened=true;const icon=$('chestIcon'),btn=$('openChestBtn');icon.textContent='🧰';icon.classList.add('opening');btn.disabled=true;btn.textContent='상자 여는 중…';$('chestDesc').textContent='클리어 보상 확인 중…';setTimeout(()=>{const pool=EXCLUSIVE_TURRETS.filter(k=>!unlockedTurrets.includes(k));let reward;if(pool.length){reward=pool[Math.floor(Math.random()*pool.length)];unlockedTurrets.push(reward);try{localStorage.setItem('coreDefenseUnlockedTurrets',JSON.stringify(unlockedTurrets))}catch(e){}const s=specs[reward];$('chestIcon').textContent='🎉';$('chestResult').textContent=`획득! ${s.emoji} ${s.name}`;$('chestDesc').textContent=`클리어 전용 포탑을 해금했어요. 다음 작전부터 포탑 목록에서 ${s.name}을(를) 설치할 수 있습니다.`;const card=document.querySelector(`.weapon[data-type="${reward}"]`);if(card)card.hidden=false;note(`클리어 전용 상자 보상: ${s.name} 해금!`)}else{$('chestIcon').textContent='🏆';$('chestResult').textContent='전용 포탑 모두 해금 완료!';$('chestDesc').textContent='이미 클리어 전용 포탑 3종을 모두 모았어요. 보상으로 500G를 지급합니다.';gold+=500;sync()}icon.classList.remove('opening');btn.style.display='none';$('chestContinueBtn').style.display='block';$('chestContinueBtn').textContent='새 작전 시작';},750)}
+function reset(){stopBgm();closePvpConnection();gameMode='solo-defense';pvp.role=null;pvp.active=false;pvp.attackEnergy=420;pvp.roomCode='';$('defenseControls').style.display='contents';$('attackPanel').hidden=true;$('pvpWaitModal').classList.remove('show');$('modeModal').classList.remove('show');gold=700;hp=35;maxHp=35;stage=1;waveInStage=0;stageWaves=4;globalWave=0;kills=0;energy=0;gameSpeed=1;upgradeChoosing=false;started=false;mapVariant=0;waveWasActive=false;turrets=[];enemies=[];bullets=[];particles=[];skillRings=[];selectedType=null;selectedTurret=null;spawning=false;spawnLeft=0;spawnTimer=0;gameOver=false;elapsed=0;overdriveUntil=0;stageClearReady=false;bonusDamage=1;bonusAttackSpeed=1;bonusRange=0;rewardMultiplier=1;energyMultiplier=1;costDiscount=0;relicNames=[];dragWeapon=null;dragTower=null;mapAction=null;ui.overlay.classList.remove('show');ui.relicModal.classList.remove('show');$('mapModal').classList.remove('show');$('chestModal').classList.remove('show');ui.status.textContent='포탑 카드를 전장 원하는 위치에 배치하세요';$('rewardText').textContent='시작 보급: 700G · 자유 배치 · 포탑 간격 80px';$('difficultyModal').classList.add('show');document.querySelectorAll('.diffpick[data-difficulty]').forEach(b=>b.classList.toggle('active',b.dataset.difficulty===difficulty));note('고유 시스템: 다른 종류 포탑의 공명 링크, 전용 무기로만 피해를 주는 위상 망령, 단계별 코어 유물 선택.');sync()}
+function drawBackground(){const themes={crystal:['#142b3b','#102337','#10172c','#56d9ca'],desert:['#5a3928','#9b6940','#342337','#ffcf82'],volcanic:['#351b2a','#552431','#191626','#ff704d'],arctic:['#17364c','#2c6075','#152c43','#b8f3ff']};const c=themes[mapTheme]||themes.crystal;const g=ctx.createLinearGradient(0,0,W,H);g.addColorStop(0,c[0]);g.addColorStop(.48,c[1]);g.addColorStop(1,c[2]);ctx.fillStyle=g;ctx.fillRect(0,0,W,H);for(let y=0;y<H;y+=40)for(let x=0;x<W;x+=40){ctx.fillStyle=((x/40+y/40)%2===0)?'#ffffff08':'#0000000b';ctx.fillRect(x,y,40,40)}for(let i=0;i<24;i++){const x=(i*137+53)%W,y=(i*83+30)%H;ctx.fillStyle=c[3]+'16';ctx.beginPath();if(mapTheme==='desert'){ctx.ellipse(x,y,14+(i%4)*3,4+(i%2)*2,i*.3,0,Math.PI*2)}else if(mapTheme==='volcanic'){ctx.moveTo(x,y-10-(i%3)*4);ctx.lineTo(x+8,y);ctx.lineTo(x,y+7);ctx.lineTo(x-7,y);ctx.closePath()}else{ctx.arc(x,y,8+(i%4)*4,0,Math.PI*2)}ctx.fill()}if(mapTheme==='arctic'){ctx.strokeStyle='#b8f3ff12';ctx.lineWidth=2;for(let i=0;i<9;i++){ctx.beginPath();ctx.moveTo(i*115-20,0);ctx.lineTo(i*115+100,H);ctx.stroke()}}else if(mapTheme==='volcanic'){ctx.strokeStyle='#ff704d22';ctx.lineWidth=3;for(let i=0;i<7;i++){ctx.beginPath();ctx.moveTo(i*145,0);ctx.lineTo(i*145+60,H);ctx.stroke()}}}
+function drawMapObjects(){
+ // Theme props are decorative only: keep them clear of all active lanes, the core, and turret bases.
+ const routes=pathsFor();
+ // Scatter props with a seeded, irregular distribution; avoid rigid rows/columns.
+ const seed=(stage*7919+mapVariant*104729+({crystal:11,desert:23,volcanic:37,arctic:53}[mapTheme]||11))>>>0;
+ let randState=seed; const rnd=()=>{randState=(randState*1664525+1013904223)>>>0;return randState/4294967296};
+ const count=47;
+ for(let i=0;i<count;i++){
+  const x=34+rnd()*(W-68);
+  const y=34+rnd()*(H-68);
+  if(x<28||x>W-28||y<28||y>H-28)continue;
+  if(Math.hypot(x-CORE.x,y-CORE.y)<100)continue;
+  if(turrets.some(t=>Math.hypot(t.x-x,t.y-y)<38))continue;
+  let nearLane=false;
+  for(const path of routes){if(distanceToPath(x,y,path)<72){nearLane=true;break}}
+  if(nearLane)continue;
+  const v=Math.floor(rnd()*4),s=.68+rnd()*.62;
+  ctx.save();ctx.translate(x,y);ctx.scale(s,s);
+  // Soft ground shadow gives the props depth without becoming gameplay objects.
+  ctx.fillStyle='#02091345';ctx.beginPath();ctx.ellipse(0,13,21,7,0,0,Math.PI*2);ctx.fill();
+  if(mapTheme==='crystal'){
+   const rocks=[[-13,7,10,5],[-2,9,13,6],[12,7,9,5]];
+   ctx.fillStyle='#172c40';ctx.strokeStyle='#426b80';ctx.lineWidth=1.3;
+   for(const [rx,ry,rrx,rry] of rocks){ctx.beginPath();ctx.ellipse(rx,ry,rrx,rry,-.15,0,Math.PI*2);ctx.fill();ctx.stroke()}
+   const shards=v===0?[[-13,7,-17,-8,-7,-20,-2,7],[-3,8,-5,-13,4,-25,8,8],[7,8,8,-6,17,-15,16,8]]:
+    v===1?[[-14,8,-18,-4,-10,-24,-4,8],[0,8,-4,-7,4,-19,9,8],[10,8,12,-2,20,-11,17,8]]:
+    v===2?[[-13,8,-19,-7,-8,-17,-2,8],[-2,8,0,-15,7,-28,11,8]]:[[-12,8,-13,-7,-5,-22,1,8],[3,8,4,-4,13,-20,16,8]];
+   for(let i=0;i<shards.length;i++){
+    const a=shards[i],colr=['#4ce5d1','#55bfe9','#ac8fff'][((v+i)%3)];
+    ctx.shadowColor=colr;ctx.shadowBlur=7;ctx.fillStyle=colr+'bb';ctx.strokeStyle=colr;ctx.lineWidth=1.1;
+    ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(a[2],a[3]);ctx.lineTo(a[4],a[5]);ctx.lineTo(a[6],a[7]);ctx.closePath();ctx.fill();ctx.stroke();
+    ctx.shadowBlur=0;ctx.strokeStyle='#e1fffd99';ctx.lineWidth=.8;ctx.beginPath();ctx.moveTo(a[2],a[3]);ctx.lineTo((a[2]+a[6])/2,(a[3]+a[7])/2);ctx.stroke();
+   }
+  }else if(mapTheme==='desert'){
+   if(v===0||v===2){
+    // Saguaro cactus with dark edging and small thorn marks.
+    ctx.lineCap='round';ctx.strokeStyle='#3d4937';ctx.lineWidth=11;ctx.beginPath();ctx.moveTo(0,12);ctx.lineTo(0,-12);ctx.moveTo(0,-2);ctx.lineTo(-8,-2);ctx.lineTo(-8,-9);ctx.moveTo(0,3);ctx.lineTo(9,3);ctx.lineTo(9,-5);ctx.stroke();
+    ctx.strokeStyle=v===0?'#78985a':'#91a967';ctx.lineWidth=7;ctx.beginPath();ctx.moveTo(0,12);ctx.lineTo(0,-12);ctx.moveTo(0,-2);ctx.lineTo(-8,-2);ctx.lineTo(-8,-9);ctx.moveTo(0,3);ctx.lineTo(9,3);ctx.lineTo(9,-5);ctx.stroke();
+    ctx.strokeStyle='#c7d28b';ctx.lineWidth=1.1;for(let k=-8;k<=8;k+=5){ctx.beginPath();ctx.moveTo(k,-5);ctx.lineTo(k+2,-7);ctx.stroke()}
+    ctx.fillStyle='#ba8855';ctx.beginPath();ctx.ellipse(0,12,17,5,0,0,Math.PI*2);ctx.fill();
+   }else{
+    // A weathered fragment of an ancient sandstone gate.
+    ctx.fillStyle='#6b4935';ctx.fillRect(-17,-13,8,27);ctx.fillRect(9,-8,8,22);ctx.fillRect(-18,-17,37,7);
+    ctx.fillStyle='#c2935d';ctx.fillRect(-14,-12,4,23);ctx.fillRect(12,-7,3,18);ctx.fillRect(-15,-16,31,3);
+    ctx.strokeStyle='#755036';ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(-11,-4);ctx.lineTo(-8,-1);ctx.lineTo(-11,3);ctx.moveTo(12,1);ctx.lineTo(14,4);ctx.stroke();
+    ctx.fillStyle='#d7b078';ctx.fillRect(-22,14,44,3);
+   }
+   ctx.fillStyle='#e8bd7a88';ctx.beginPath();ctx.ellipse(-8,5,4,2,-.3,0,Math.PI*2);ctx.fill();
+  }else if(mapTheme==='volcanic'){
+   if(v===0||v===3){
+    // Basalt outcrop with glowing magma seams.
+    ctx.fillStyle='#201a29';ctx.strokeStyle='#67333a';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(-21,10);ctx.lineTo(-17,-1);ctx.lineTo(-10,-13);ctx.lineTo(-3,-7);ctx.lineTo(3,-18);ctx.lineTo(12,-7);ctx.lineTo(20,1);ctx.lineTo(17,11);ctx.closePath();ctx.fill();ctx.stroke();
+    ctx.shadowColor='#ff572f';ctx.shadowBlur=7;ctx.strokeStyle='#ff7547';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-14,2);ctx.lineTo(-7,5);ctx.lineTo(-3,-2);ctx.moveTo(4,-7);ctx.lineTo(8,0);ctx.lineTo(14,3);ctx.stroke();ctx.shadowBlur=0;
+    ctx.fillStyle='#a84236';ctx.beginPath();ctx.arc(-15,-2,2,0,Math.PI*2);ctx.arc(13,-6,2.5,0,Math.PI*2);ctx.fill();
+   }else{
+    // Small magma vent / cooled lava pool.
+    ctx.fillStyle='#241b2a';ctx.strokeStyle='#6b343a';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(0,2,20,13,-.1,0,Math.PI*2);ctx.fill();ctx.stroke();
+    ctx.shadowColor='#ff593a';ctx.shadowBlur=11;ctx.fillStyle='#d94c35';ctx.beginPath();ctx.ellipse(0,1,12,7,.2,0,Math.PI*2);ctx.fill();ctx.fillStyle='#ffb05b';ctx.beginPath();ctx.ellipse(-2,0,6,3,-.2,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
+    ctx.strokeStyle='#a7433e';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-15,-8);ctx.lineTo(-10,-3);ctx.lineTo(-13,2);ctx.moveTo(15,6);ctx.lineTo(10,3);ctx.stroke();
+   }
+  }else{
+   if(v===0||v===2){
+    // Layered alpine pine, with snow-catching branches.
+    ctx.fillStyle='#173d50';ctx.fillRect(-2,5,4,10);
+    for(let k=0;k<3;k++){const yy=-15+k*9,ww=15-k*2;ctx.fillStyle=k===0?'#4ba3b5':'#286c82';ctx.beginPath();ctx.moveTo(0,yy-8);ctx.lineTo(ww,yy+8);ctx.lineTo(-ww,yy+8);ctx.closePath();ctx.fill();ctx.strokeStyle='#b6eff5';ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(0,yy-8);ctx.lineTo(ww*.48,yy+1);ctx.moveTo(0,yy-8);ctx.lineTo(-ww*.48,yy+1);ctx.stroke()}
+   }else{
+    // Faceted ice boulder / blue ice shards.
+    ctx.fillStyle='#326e86';ctx.strokeStyle='#a5edfa';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(-20,9);ctx.lineTo(-16,-4);ctx.lineTo(-6,-14);ctx.lineTo(1,-8);ctx.lineTo(11,-17);ctx.lineTo(20,-2);ctx.lineTo(17,10);ctx.closePath();ctx.fill();ctx.stroke();
+    ctx.fillStyle='#a5edfa88';ctx.beginPath();ctx.moveTo(-6,-13);ctx.lineTo(1,-7);ctx.lineTo(-3,5);ctx.lineTo(-13,3);ctx.closePath();ctx.fill();ctx.beginPath();ctx.moveTo(11,-16);ctx.lineTo(17,-2);ctx.lineTo(7,6);ctx.closePath();ctx.fill();
+   }
+   ctx.fillStyle='#e0fbff99';ctx.beginPath();ctx.ellipse(-8,9,5,2,-.25,0,Math.PI*2);ctx.fill();
+  }
+  ctx.restore();
+ }
+}
+function drawPaths(){for(const path of pathsFor()){ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();path.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.strokeStyle='#07121d';ctx.lineWidth=61;ctx.stroke();ctx.strokeStyle=mapTheme==='desert'?'#8b6848':mapTheme==='volcanic'?'#502b35':mapTheme==='arctic'?'#37657a':'#243b51';ctx.lineWidth=53;ctx.stroke();ctx.strokeStyle=mapTheme==='desert'?'#c59a68':mapTheme==='volcanic'?'#9b5146':mapTheme==='arctic'?'#75a9bb':'#3a566b';ctx.lineWidth=41;ctx.stroke();ctx.strokeStyle=mapTheme==='arctic'?'#d4fbff':mapTheme==='desert'?'#f3d2a0':mapTheme==='volcanic'?'#ff9a72':'#6b879b';ctx.lineWidth=2;ctx.setLineDash([10,13]);ctx.stroke();ctx.setLineDash([]);for(let i=1;i<path.length;i++){const a=path[i-1],b=path[i],dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy);if(len<90)continue;const x=(a[0]+b[0])/2,y=(a[1]+b[1])/2,ang=Math.atan2(dy,dx);ctx.save();ctx.translate(x,y);ctx.rotate(ang);ctx.fillStyle='#c6e0ed70';ctx.beginPath();ctx.moveTo(6,0);ctx.lineTo(-5,-4);ctx.lineTo(-5,4);ctx.closePath();ctx.fill();ctx.restore()}}}
+function drawPads(){}
+function drawCore(){ctx.save();ctx.translate(CORE.x,CORE.y);ctx.shadowColor='#52f0da';ctx.shadowBlur=27;ctx.fillStyle='#1d7c8c';ctx.beginPath();ctx.moveTo(0,-34);ctx.lineTo(25,-16);ctx.lineTo(29,12);ctx.lineTo(0,33);ctx.lineTo(-29,12);ctx.lineTo(-25,-16);ctx.closePath();ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle='#77fff0';ctx.lineWidth=3;ctx.stroke();ctx.fillStyle='#d8fffd';ctx.beginPath();ctx.moveTo(0,-19);ctx.lineTo(13,-6);ctx.lineTo(8,11);ctx.lineTo(-8,11);ctx.lineTo(-13,-6);ctx.closePath();ctx.fill();ctx.restore();ctx.textAlign='center';ctx.fillStyle='#a2fff4';ctx.font='bold 12px system-ui';ctx.fillText('CORE',CORE.x,CORE.y+48);ctx.fillStyle='#12283c';ctx.fillRect(CORE.x-30,CORE.y+56,60,5);ctx.fillStyle='#52f0da';ctx.fillRect(CORE.x-30,CORE.y+56,60*Math.max(0,hp/maxHp),5)}
+function drawTurret(t,x=t.x,y=t.y){const s=specs[t.type],lv=t.level,accent=s.color;ctx.save();ctx.translate(x,y);if(selectedTurret===t||t.flash>0){ctx.beginPath();ctx.arc(0,0,24+Math.sin(elapsed*8)*2,0,Math.PI*2);ctx.strokeStyle=selectedTurret===t?'#53efdcaa':accent+'aa';ctx.lineWidth=2;ctx.stroke()}ctx.shadowColor=accent;ctx.shadowBlur=lv>=10?17:7;ctx.fillStyle='#07111d';ctx.strokeStyle='#637b96';ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,18,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.shadowBlur=0;ctx.strokeStyle=accent;ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,13,0,Math.PI*2);ctx.stroke();ctx.fillStyle='#233c54';ctx.beginPath();ctx.arc(0,0,9,0,Math.PI*2);ctx.fill();ctx.rotate(t.angle);ctx.shadowColor=accent;ctx.shadowBlur=6;
+ if(t.type==='gun'){ctx.fillStyle='#7195a6';ctx.fillRect(-3,-10,19,20);ctx.fillStyle=accent;ctx.fillRect(4,-5,23-t.kick*4,10);ctx.fillStyle='#e0f6ff';ctx.fillRect(14,-2,8,4);ctx.fillStyle='#415d73';ctx.fillRect(-10,-13,9,26)}
+ if(t.type==='cannon'){ctx.fillStyle='#8e746b';ctx.beginPath();ctx.moveTo(-12,-12);ctx.lineTo(6,-10);ctx.lineTo(17,-7);ctx.lineTo(20,7);ctx.lineTo(6,10);ctx.lineTo(-12,12);ctx.closePath();ctx.fill();ctx.fillStyle=accent;ctx.fillRect(2,-7,25-t.kick*4,14);ctx.fillStyle='#ffd7b8';ctx.fillRect(20,-4,5,8)}
+ if(t.type==='frost'){ctx.fillStyle='#477caa';ctx.beginPath();ctx.moveTo(-12,-10);ctx.lineTo(3,-13);ctx.lineTo(13,0);ctx.lineTo(3,13);ctx.lineTo(-12,10);ctx.closePath();ctx.fill();ctx.fillStyle=accent;ctx.fillRect(4,-5,19-t.kick*3,10);ctx.fillStyle='#e6fbff';ctx.beginPath();ctx.arc(7,0,4,0,Math.PI*2);ctx.fill()}
+ if(t.type==='laser'){ctx.fillStyle='#634d8e';ctx.beginPath();ctx.moveTo(-12,-11);ctx.lineTo(3,-9);ctx.lineTo(15,-5);ctx.lineTo(15,5);ctx.lineTo(3,9);ctx.lineTo(-12,11);ctx.closePath();ctx.fill();ctx.fillStyle=accent;ctx.fillRect(1,-4,29-t.kick*4,8);ctx.fillStyle='#fff';ctx.fillRect(20,-2,5,4)}
+ if(t.type==='prism'){ctx.fillStyle='#653b78';ctx.beginPath();ctx.moveTo(-12,0);ctx.lineTo(-5,-12);ctx.lineTo(7,-9);ctx.lineTo(15,0);ctx.lineTo(7,9);ctx.lineTo(-5,12);ctx.closePath();ctx.fill();ctx.fillStyle=accent;ctx.beginPath();ctx.moveTo(2,-5);ctx.lineTo(28-t.kick*4,0);ctx.lineTo(2,5);ctx.closePath();ctx.fill();ctx.fillStyle='#fff';ctx.fillRect(12,-2,9,4)}
+ if(t.type==='arc'){ctx.strokeStyle=accent;ctx.lineWidth=3;for(let j=0;j<3;j++){ctx.beginPath();ctx.moveTo(-5,j*5-5);ctx.lineTo(3,j*5-8);ctx.lineTo(10,j*5-3);ctx.lineTo(22-t.kick*3,j*5-5);ctx.stroke()}ctx.fillStyle='#dbe6ff';ctx.beginPath();ctx.arc(2,0,5,0,Math.PI*2);ctx.fill()}
+ if(t.type==='nova'){ctx.fillStyle='#7c5427';ctx.beginPath();for(let j=0;j<10;j++){const a=j*Math.PI/5,r=j%2?8:14;const xx=Math.cos(a)*r,yy=Math.sin(a)*r;j?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy)}ctx.closePath();ctx.fill();ctx.fillStyle=accent;ctx.beginPath();ctx.arc(9,0,7-t.kick*2,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fff4cb';ctx.beginPath();ctx.arc(11,0,3,0,Math.PI*2);ctx.fill()}ctx.restore();
+ if(lv>=3){ctx.fillStyle=lv>=10?'#ffd16b':accent;for(let i=0;i<Math.min(5,Math.ceil(lv/3));i++){ctx.beginPath();ctx.arc(x-8+i*4,y-23,1.5,0,Math.PI*2);ctx.fill()}}ctx.fillStyle=lv>=10?'#ffd16b':'#dbe8f7';ctx.font='bold 10px system-ui';ctx.textAlign='center';ctx.fillText('Lv.'+lv,x,y+31);if(t.branch){ctx.fillStyle=t.branch==='speed'?'#52f0da':'#ffd16b';ctx.font='bold 11px system-ui';ctx.fillText(t.branch==='speed'?'⚡':'✦',x+17,y-17)}}
+function drawEnemy(e){
+ const t=e.anim+(e.sway||0),r=e.r||12,flash=e.flash>0;
+ const accent=e.color||'#ed6079';
+ const glow=(color,blur=10)=>{ctx.shadowColor=color;ctx.shadowBlur=blur};
+ const poly=(pts,fill,stroke,line=1.4)=>{ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath();ctx.fillStyle=fill;ctx.fill();if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=line;ctx.stroke()}};
+ const line=(x1,y1,x2,y2,color,width=1.5)=>{ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.strokeStyle=color;ctx.lineWidth=width;ctx.lineCap='round';ctx.stroke()};
+ const circ=(x,y,rr,fill,stroke=null,width=1)=>{ctx.beginPath();ctx.arc(x,y,rr,0,Math.PI*2);ctx.fillStyle=fill;ctx.fill();if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=width;ctx.stroke()}};
+ const eye=(x,y,rr,color)=>{glow(color,6);circ(x,y,rr,color,'#fff1d7',.8);ctx.shadowBlur=0;circ(x+rr*.18,y,rr*.35,'#fff')};
+ ctx.save();ctx.translate(e.x,e.y);
+ // Each unit faces its actual travel direction; the tiny recoil makes hits feel physical.
+ ctx.rotate((e.heading||0)+(flash?Math.sin(t*2)*.08:Math.sin(t*.25)*.018));
+ if(e.hitKick>0)ctx.translate(-e.hitKick*8,Math.sin(t*3)*e.hitKick*3);
+ const bob=e.kind==='tank'?Math.abs(Math.sin(t*.5))*1.0:Math.sin(t*(e.kind==='runner'?1.5:.72))*(e.kind==='boss'?1.1:1.8);
+ ctx.translate(0,bob);
+ // Ground contact shadow and individual movement trails.
+ ctx.save();ctx.rotate(0);ctx.globalAlpha=.26;ctx.fillStyle='#000';ctx.beginPath();ctx.ellipse(-r*.18,r*.62,r*(e.kind==='boss'?1.55:1.15),r*.34,0,0,Math.PI*2);ctx.fill();ctx.restore();
+ if(e.kind==='runner'){
+  for(let i=0;i<3;i++){ctx.globalAlpha=(e.sprinting>0?.24:.09)*(1-i*.22);line(-r*(.8+i*.5),-r*.42+i*r*.4,-r*(1.4+i*.55),-r*.42+i*r*.4,'#ffd166',1.7-i*.3)}ctx.globalAlpha=1;
+ }
+ if(e.kind==='phase'&&e.phaseFx>0){ctx.globalAlpha=Math.min(.35,e.phaseFx*.8);circ(-r*.7,-r*.2,r*.85,'#c7a1ff');circ(-r*1.25,r*.25,r*.42,'#eadbff');ctx.globalAlpha=1}
+ if(e.kind==='boss'){
+  // Twin rotating containment rings behind the commander.
+  ctx.save();ctx.rotate(t*.26);ctx.strokeStyle='#ffb36a88';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(0,0,r*1.48,r*.88,-.18,0,Math.PI*2);ctx.stroke();ctx.setLineDash([4,5]);ctx.beginPath();ctx.ellipse(0,0,r*1.62,r*.99,.18,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);ctx.restore();
+  // Four plated legs with animated joints.
+  for(const side of [-1,1])for(let i=0;i<2;i++){const sy=side*(r*.48+i*r*.46),swing=Math.sin(t*.9+i*Math.PI+side)*3.2;line(-r*.35,sy*.55,-r*.92,sy+swing,'#7d5351',4);circ(-r*.92,sy+swing,2.5,'#ffbf83','#5d303d',1);line(-r*.92,sy+swing,-r*1.18,sy+swing+side*2,'#ffad68',2.2)}
+  glow('#ff784e',e.roar>0?27:17);
+  poly([[-r*1.15,-r*.28],[-r*.82,-r*.82],[-r*.28,-r*.96],[r*.28,-r*.96],[r*.82,-r*.82],[r*1.13,-r*.25],[r*1.02,r*.58],[r*.45,r*.92],[-r*.45,r*.92],[-r*1.02,r*.58]],flash?'#fff':'#783f43','#ffc080',2.5);ctx.shadowBlur=0;
+  poly([[-r*.72,-r*.43],[-r*.45,-r*.77],[r*.43,-r*.77],[r*.75,-r*.39],[r*.65,r*.42],[0,r*.72],[-r*.65,r*.42]],'#b45c4e','#4a2637',2);
+  // Horns, exposed side pistons and rivets.
+  poly([[-r*.68,-r*.57],[-r*1.02,-r*1.23],[-r*.27,-r*.86]],'#ffbe7d','#6b3540',1.6);poly([[r*.3,-r*.84],[r*.92,-r*1.2],[r*.72,-r*.48]],'#ffbe7d','#6b3540',1.6);
+  for(const side of [-1,1]){circ(side*r*.69,side===-1?-r*.21:r*.25,2,'#ffcf8a','#6c3541',.8);circ(side*r*.74,side===-1?r*.26:-r*.24,1.5,'#ffcf8a')}
+  // Central reactor and angular face.
+  glow('#ff9b5c',13);poly([[-r*.34,-r*.22],[0,-r*.47],[r*.34,-r*.22],[r*.25,r*.22],[0,r*.4],[-r*.25,r*.22]],'#ffe2a1','#7a3f48',1.4);ctx.shadowBlur=0;
+  eye(-r*.25,-r*.32,Math.max(2,r*.09),'#fff0b2');eye(r*.25,-r*.32,Math.max(2,r*.09),'#fff0b2');line(-r*.25,r*.11,r*.25,r*.11,'#421d33',2.3);line(-r*.15,r*.22,r*.15,r*.22,'#ffb56e',1.3);
+  // Warning glow pulses before the boss charge.
+  if(e.bossWindup>0||e.bossRush>0){ctx.globalAlpha=.55+Math.sin(t*2)*.2;ctx.strokeStyle=e.bossRush>0?'#fff0a6':'#ff654f';ctx.lineWidth=2.8;ctx.beginPath();ctx.arc(0,0,r*1.72,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1}
+ }else if(e.kind==='grunt'){
+  // Small bio-mechanical raider: articulated feelers, shell plates, glowing visor.
+  for(const side of [-1,1]){const sw=Math.sin(t+side)*2.4;line(-r*.25,side*r*.25,-r*.55,side*r*.94+sw,'#723446',2);circ(-r*.55,side*r*.94+sw,1.8,'#ff9aaa');line(-r*.45,side*r*.55,-r*.68,side*r*1.02-sw,'#d95b76',1.3);}
+  poly([[-r*.9,-r*.22],[-r*.55,-r*.83],[r*.18,-r*.92],[r*.72,-r*.43],[r*.82,r*.2],[r*.28,r*.75],[-r*.48,r*.64],[-r*.86,r*.25]],flash?'#fff':'#b94361','#ff9cae',1.5);
+  poly([[-r*.52,-r*.31],[-r*.18,-r*.65],[r*.38,-r*.5],[r*.62,-r*.04],[r*.24,r*.43],[-r*.34,r*.36]],'#ed6b82','#6a263d',1);
+  // Ridge plates and glowing sensor eye.
+  for(let i=0;i<3;i++)poly([[-r*.52+i*r*.27,-r*.56],[-r*.38+i*r*.27,-r*.76],[-r*.22+i*r*.27,-r*.48]],'#ffc0c8','#7d3248',.7);
+  eye(r*.43,-r*.12,Math.max(2,r*.17),'#fff0b3');line(r*.12,r*.36,r*.54,r*.27,'#5a1d34',1.6);circ(-r*.27,r*.08,r*.12,'#5b1f39','#ffb4c2',.7);
+ }else if(e.kind==='runner'){
+  // Lean, aerodynamic skimmer with swept fins, bright cockpit and rapid leg cycle.
+  const run=Math.sin(t*1.6)*r*.16;
+  for(const side of [-1,1]){line(-r*.24,side*r*.27,-r*.67,side*r*.72+run,'#956321',2.2);line(-r*.67,side*r*.72+run,-r*.95,side*r*.67-run,'#ffd166',1.6);line(r*.02,side*r*.22,-r*.2,side*r*.75-run,'#d7a34a',1.5)}
+  poly([[-r*1.05,-r*.45],[-r*.62,-r*.72],[-r*.17,-r*.5],[r*.62,-r*.35],[r*1.15,0],[r*.54,r*.3],[-r*.2,r*.6],[-r*.63,r*.48]],flash?'#fff':'#bf842f','#ffe5a0',1.8);
+  poly([[-r*.45,-r*.32],[-r*.1,-r*.53],[r*.61,-r*.25],[r*.92,0],[r*.47,r*.17],[-r*.16,r*.39],[-r*.48,r*.18]],'#ffd166','#8d5b23',1);
+  poly([[-r*.36,-r*.36],[-r*.76,-r*.94],[-r*.05,-r*.55]],'#f9c15b','#8d5b23',1.2);poly([[-r*.36,r*.36],[-r*.76,r*.94],[-r*.05,r*.55]],'#f9c15b','#8d5b23',1.2);
+  eye(r*.52,-r*.08,Math.max(2,r*.15),'#fff9c6');line(-r*.53,0,-r*.8,0,'#fff0b6',1);
+ }else if(e.kind==='tank'){
+  // Heavy siege unit: slow tread feet, layered armor, bolts and a recessed cannon port.
+  for(const side of [-1,1]){const step=Math.sin(t*.55+side)*1.5;ctx.save();ctx.translate(-r*.2,side*r*.68);ctx.rotate(step*.04);ctx.fillStyle='#4d6073';ctx.strokeStyle='#d2dce5';ctx.lineWidth=1.2;ctx.beginPath();ctx.roundRect(-r*.52,-r*.19,r*.87,r*.38,3);ctx.fill();ctx.stroke();for(let i=0;i<4;i++)circ(-r*.42+i*r*.19,0,1.1,'#9db1c0');ctx.restore()}
+  poly([[-r*.9,-r*.45],[-r*.65,-r*.9],[r*.32,-r*.91],[r*.91,-r*.48],[r*.95,r*.48],[r*.35,r*.9],[-r*.64,r*.8],[-r*.95,r*.35]],flash?'#fff':'#6f879a','#dfe9f2',2);
+  poly([[-r*.62,-r*.53],[-r*.24,-r*.7],[r*.55,-r*.54],[r*.68,-r*.15],[r*.46,r*.43],[-r*.31,r*.56],[-r*.66,r*.24]],'#a9bac8','#43596e',1.7);
+  // Armor seams and bolts.
+  line(-r*.68,-r*.17,r*.57,-r*.25,'#e3edf5',1.2);line(-r*.57,r*.35,r*.37,r*.48,'#3b5167',1.4);
+  for(const x of [-.56,.56])for(const y of [-.46,.43])circ(r*x,r*y,1.7,'#eff5f8','#536b7c',.7);
+  poly([[r*.18,-r*.28],[r*.78,-r*.24],[r*.98,0],[r*.76,r*.24],[r*.18,r*.28]],'#34485d','#e1ebf1',1.4);circ(r*.65,0,r*.15,'#ffbd7d','#fff0d5',1);circ(r*.65,0,r*.065,'#fff7d9');
+  ctx.strokeStyle='#ffca8c';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(-r*.15,0,r*.42,-1.1,1.1);ctx.stroke();
+ }else if(e.kind==='phase'){
+  // Floating prism wraith with fragmented orbiting shards and a rotating spectral aperture.
+  ctx.save();ctx.globalAlpha=.24;poly([[-r*.78,0],[-r*1.35,-r*.52],[-r*.9,r*.47]],'#d5bdff','#f1e8ff',1);ctx.restore();
+  ctx.save();ctx.rotate(t*.45);for(let i=0;i<4;i++){const a=i*Math.PI/2;ctx.save();ctx.rotate(a);poly([[r*.92,0],[r*1.3,-r*.22],[r*1.37,0],[r*1.3,r*.22]],'#aa7cf2','#f0e4ff',1);ctx.restore()}ctx.restore();
+  ctx.globalAlpha=.84+.12*Math.sin(t*1.3);
+  glow('#bd8bff',e.phaseFx>0?22:12);
+  poly([[-r*.82,-r*.47],[-r*.28,-r*.93],[r*.35,-r*.72],[r*.9,-r*.15],[r*.48,r*.63],[-r*.1,r*.94],[-r*.79,r*.42]],flash?'#fff':'#9a72e7','#f1e6ff',2);
+  ctx.shadowBlur=0;poly([[-r*.36,-r*.35],[r*.25,-r*.53],[r*.57,-r*.07],[r*.18,r*.44],[-r*.43,r*.27]],'#e6d9ff','#7850bd',1.2);
+  eye(r*.18,-r*.08,Math.max(2,r*.16),'#fff');line(-r*.43,r*.4,r*.14,r*.23,'#6f4aa6',1.5);ctx.globalAlpha=1;
+  for(let i=0;i<3;i++){const a=t*.7+i*Math.PI*2/3;circ(Math.cos(a)*r*1.48,Math.sin(a)*r*.9,1.5,'#f3eaff')}
+ }else if(e.kind==='shield'){
+  // Defense carrier with an actual shield bar and a segmented rotating energy shell.
+  ctx.save();ctx.rotate(t*.34);for(let i=0;i<6;i++){const a=i*Math.PI/3;ctx.save();ctx.rotate(a);poly([[r*.76,-r*.22],[r*1.05,-r*.18],[r*1.12,0],[r*1.05,r*.18],[r*.76,r*.22]],'#42a9d0','#d7faff',1.1);ctx.restore()}ctx.restore();
+  glow('#4bcbea',10);circ(0,0,r*.9,flash?'#fff':'#2185ae','#d7fbff',2.2);ctx.shadowBlur=0;
+  poly([[-r*.58,-r*.48],[0,-r*.76],[r*.58,-r*.48],[r*.66,r*.25],[0,r*.69],[-r*.66,r*.25]],'#9ae9fa','#174a69',1.7);
+  poly([[-r*.32,-r*.29],[0,-r*.47],[r*.32,-r*.29],[r*.37,r*.18],[0,r*.4],[-r*.37,r*.18]],'#1a4560','#beffff',1.2);
+  circ(0,-r*.06,r*.2,'#8cffff','#fff',1);circ(0,-r*.06,r*.08,'#fff');
+  for(const side of [-1,1]){line(side*r*.44,r*.13,side*r*.28,r*.44,'#e1fcff',1.2);circ(side*r*.45,r*.14,1.5,'#fff')}
+  if(e.shield>0){ctx.globalAlpha=.25+.12*Math.sin(t);ctx.strokeStyle='#73efff';ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,r*1.34,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1}
+ }else if(e.kind==='healer'){
+  // Hovering repair drone with rotating vanes and an animated medical pulse.
+  ctx.save();ctx.rotate(t*.55);for(let i=0;i<3;i++){ctx.save();ctx.rotate(i*Math.PI*2/3);poly([[r*.28,-r*.3],[r*1.04,-r*.53],[r*.9,-r*.14],[r*.38,r*.06]],'#4cad84','#d5ffe7',1.1);circ(r*.78,-r*.22,1.4,'#e6fff0');ctx.restore()}ctx.restore();
+  glow('#73e6a1',e.healPulse>0?19:8);poly([[-r*.66,-r*.08],[-r*.25,-r*.77],[r*.34,-r*.72],[r*.72,-r*.02],[r*.3,r*.62],[-r*.32,r*.59]],flash?'#fff':'#56b987','#d7ffe7',1.8);ctx.shadowBlur=0;
+  poly([[-r*.34,-r*.28],[0,-r*.5],[r*.37,-r*.24],[r*.28,r*.28],[0,r*.43],[-r*.32,r*.22]],'#b7ffd2','#2e795e',1.2);
+  // A compact cross is kept legible at normal game zoom.
+  ctx.fillStyle='#f2fff7';ctx.fillRect(-r*.1,-r*.32,r*.2,r*.64);ctx.fillRect(-r*.32,-r*.1,r*.64,r*.2);
+  line(-r*.12,-r*.61,-r*.3,-r*.94,'#d4ffe3',1.3);circ(-r*.3,-r*.94,1.7,'#fff');
+  if(e.healPulse>0){ctx.globalAlpha=e.healPulse*1.2;ctx.strokeStyle='#a8ffc8';ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,r*(1.15+(1-e.healPulse)*.8),0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1}
+ }else if(e.kind==='splitter'){
+  // Unstable crystal mine: split seams brighten as its health gets low.
+  ctx.save();ctx.rotate(Math.sin(t*.48)*.22);glow('#e88bff',10);
+  poly([[0,-r*1.16],[r*.45,-r*.62],[r*1.03,-r*.41],[r*.72,r*.2],[r*.86,r*.8],[r*.12,r*.63],[-r*.47,r*1.01],[-r*.67,r*.32],[-r*1.02,-r*.14],[-r*.43,-r*.61]],flash?'#fff':'#b96ad6','#ffe0ff',2);ctx.shadowBlur=0;
+  poly([[-r*.3,-r*.38],[r*.17,-r*.56],[r*.49,-r*.12],[r*.22,r*.43],[-r*.28,r*.34],[-r*.49,-r*.05]],'#f0a8ff','#743e92',1.2);
+  for(const side of [-1,1]){poly([[side*r*.44,-r*.25],[side*r*.75,-r*.56],[side*r*.65,-r*.08]],'#f6c5ff','#8d4bb0',.8);line(0,-r*.42,side*r*.16,r*.33,'#713a8d',1.1)}
+  circ(r*.08,-r*.06,r*.13,'#fff0ff','#8b4aa6',.8);ctx.restore();
+  if(e.hp/e.maxHp<.35){ctx.globalAlpha=.7+.25*Math.sin(t*1.4);ctx.strokeStyle='#ffb8ff';ctx.lineWidth=1.4;ctx.setLineDash([3,3]);ctx.beginPath();ctx.arc(0,0,r*1.24,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1}
+ }
+ // Freeze/stun treatment and distinct status VFX, all layered beneath the unchanged health/shield UI.
+ if(e.slow<.72&&e.kind!=='phase'){ctx.globalAlpha=.58;ctx.strokeStyle='#91ddff';ctx.lineWidth=1.7;ctx.beginPath();ctx.arc(0,0,r*1.12,-.9,.9);ctx.stroke();ctx.globalAlpha=1}
+ if(e.stun>0){glow('#8cfaff',12);ctx.strokeStyle='#c9ffff';ctx.lineWidth=1.8;ctx.beginPath();ctx.arc(0,0,r*1.48+Math.sin(t)*1.8,0,Math.PI*2);ctx.stroke();ctx.shadowBlur=0;for(let i=0;i<3;i++){const a=t*.65+i*Math.PI*2/3;circ(Math.cos(a)*r*1.5,Math.sin(a)*r*1.5,1.6,'#e5ffff')}}
+ if(e.healPulse>0&&e.kind!=='healer'){ctx.globalAlpha=Math.min(.8,e.healPulse);ctx.strokeStyle='#8effb6';ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,r*1.22+(1-e.healPulse)*3,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1}
+ ctx.restore();
+ // Improved layered health bars with a readable frame and colour-coded boss/shield status.
+ const bw=e.kind==='boss'?58:(['tank','healer','splitter'].includes(e.kind)?38:31),by=e.y-r-17;
+ ctx.save();ctx.fillStyle='#07111d';ctx.fillRect(e.x-bw/2-1,by-1,bw+2,7);ctx.fillStyle='#352538';ctx.fillRect(e.x-bw/2,by,bw,5);
+ const ratio=Math.max(0,Math.min(1,e.hp/e.maxHp));const hpGrad=ctx.createLinearGradient(e.x-bw/2,by,e.x+bw/2,by);hpGrad.addColorStop(0,e.kind==='boss'?'#ff744f':ratio<.3?'#ff526f':accent);hpGrad.addColorStop(1,e.kind==='boss'?'#ffd080':ratio<.3?'#ff9b6a':'#f1ffff');ctx.fillStyle=hpGrad;ctx.fillRect(e.x-bw/2,by,bw*ratio,5);ctx.strokeStyle='#ffffff70';ctx.lineWidth=.75;ctx.strokeRect(e.x-bw/2,by,bw,5);
+ if(e.shield>0){ctx.fillStyle='#091c2d';ctx.fillRect(e.x-bw/2,by-5,bw,3);ctx.fillStyle='#62eaff';ctx.fillRect(e.x-bw/2,by-5,bw*Math.max(0,e.shield/e.maxShield),3);ctx.strokeStyle='#b3f7ff';ctx.strokeRect(e.x-bw/2,by-5,bw,3)}
+ if(e.kind==='boss'){ctx.textAlign='center';ctx.font='bold 10px system-ui';ctx.fillStyle='#ffe4b6';ctx.fillText(e.bossWindup>0?'돌진 준비':e.bossRush>0?'돌진 중':'지휘 개체',e.x,e.y-r-23)}
+ const label={grunt:'',runner:'RUSH',tank:'ARMOR',phase:'PHASE',shield:'SHIELD',healer:'REPAIR',splitter:'SPLIT',boss:''}[e.kind];
+ if(label){ctx.textAlign='center';ctx.font=`900 ${e.kind==='tank'||e.kind==='healer'?8:8.5}px system-ui`;ctx.fillStyle=e.kind==='phase'?'#e8d9ff':e.kind==='runner'?'#ffedaa':e.kind==='shield'?'#bff7ff':e.kind==='healer'?'#caffde':e.kind==='splitter'?'#ffd5ff':'#e4edf5';ctx.shadowColor='#07111d';ctx.shadowBlur=3;ctx.fillText(e.mini?'FRAGMENT':label,e.x,e.y+r+11);ctx.shadowBlur=0}
+ ctx.restore();
+}
+function draw(){drawBackground();drawMapObjects();drawPaths();drawPads();drawCore();
+ // resonance links between different turret classes (decorative link mirrors the real damage bonus)
+ for(let i=0;i<turrets.length;i++){const a=turrets[i];let partner=null,bd=145;for(let j=i+1;j<turrets.length;j++){const b=turrets[j];if(a.type===b.type)continue;const d=dist(a,b);if(d<=bd){partner=b;bd=d}}if(partner){ctx.save();ctx.strokeStyle='#5deadd48';ctx.lineWidth=2;ctx.setLineDash([4,5]);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(partner.x,partner.y);ctx.stroke();ctx.setLineDash([]);ctx.restore()}}
+ if(mouse.inside&&(selectedType||(dragWeapon&&dragWeapon.moved))){const type=selectedType||(dragWeapon&&dragWeapon.type);const p=mouse,valid=isPositionValid(p.x,p.y);ctx.beginPath();ctx.arc(p.x,p.y,specs[type].range,0,Math.PI*2);ctx.fillStyle=valid?'rgba(82,240,218,.045)':'rgba(255,100,126,.045)';ctx.fill();ctx.strokeStyle=valid?'rgba(82,240,218,.25)':'rgba(255,100,126,.3)';ctx.stroke();ctx.globalAlpha=.8;ctx.fillStyle=valid?'#53efdc':'#ff647e';ctx.beginPath();ctx.arc(p.x,p.y,15,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1}
+ for(const t of turrets){ctx.beginPath();ctx.arc(t.x,t.y,t.range,0,Math.PI*2);ctx.strokeStyle=selectedTurret===t?'#53efdc45':'#9ab5ce09';ctx.lineWidth=1;ctx.stroke();if(dragTower&&dragTower.t===t&&dragTower.moved){ctx.globalAlpha=.22;drawTurret(t);ctx.globalAlpha=1}else drawTurret(t)}
+ if(dragTower&&dragTower.moved){const p=mouse,valid=isPositionValid(p.x,p.y,dragTower.t);ctx.save();ctx.globalAlpha=.85;ctx.strokeStyle=valid?'#53efdc':'#ff647e';ctx.lineWidth=3;ctx.beginPath();ctx.arc(p.x,p.y,25,0,Math.PI*2);ctx.stroke();drawTurret(dragTower.t,p.x,p.y);ctx.restore()}
+ for(const e of enemies)drawEnemy(e);for(const b of bullets){if(b.beam){ctx.strokeStyle=b.color;ctx.lineWidth= b.color==='#c29aff'?7:5;ctx.shadowBlur=18;ctx.shadowColor=b.color;ctx.globalAlpha=Math.max(0,b.life/.15);ctx.beginPath();ctx.moveTo(b.x,b.y);ctx.lineTo(b.tx,b.ty);ctx.stroke();ctx.globalAlpha=1;ctx.shadowBlur=0}else{ctx.fillStyle=b.color;ctx.shadowBlur=10;ctx.shadowColor=b.color;ctx.beginPath();ctx.arc(b.x,b.y,b.type==='cannon'?6:4,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0}}
+ for(const p of particles){ctx.globalAlpha=Math.max(0,p.life/p.max);ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.size||2.5,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1}for(const r of skillRings){ctx.globalAlpha=Math.max(0,r.life/r.max);ctx.strokeStyle=r.color;ctx.lineWidth= r.color==='#a9f5ff'?3:4;ctx.shadowColor=r.color;ctx.shadowBlur=8;ctx.beginPath();ctx.arc(r.x,r.y,r.r,0,Math.PI*2);ctx.stroke();ctx.shadowBlur=0;ctx.globalAlpha=1}
+ if(elapsed<overdriveUntil){ctx.strokeStyle='#d8a4ff3c';ctx.lineWidth=5;ctx.strokeRect(3,3,W-6,H-6);ctx.fillStyle='#e0c5ff';ctx.font='bold 14px system-ui';ctx.textAlign='right';ctx.fillText('⚡ OVERDRIVE',W-16,24)}ctx.textAlign='left';ctx.fillStyle='#a7bdd2';ctx.font='bold 11px system-ui';ctx.fillText(`${difficulty==='easy'?'쉬움':difficulty==='normal'?'보통':'어려움'} ${difficultyMultiplier}x · 단계 ${stage} · ${pathsFor().length}개 경로 · 유물 ${relicNames.length}개`,14,20)}
+function placeAtClient(cx,cy,type){const p=clientToCanvas(cx,cy);if(!p){note('포탑을 전장 안에 놓으세요.');return false}if(!isPositionValid(p.x,p.y)){note('설치 불가! 적 경로에서 떨어지고 다른 포탑과 약 80px 간격을 유지하는 위치를 골라 주세요.');return false}return makeTurret(type,p)}
+function moveTowerAtClient(cx,cy,t){const p=clientToCanvas(cx,cy);if(!p){note('포탑을 전장 안으로 옮기세요.');return false}if(!isPositionValid(p.x,p.y,t)){note('이 위치는 경로와 너무 가깝거나 다른 포탑과 간격이 부족해요.');return false}t.x=p.x;t.y=p.y;t.flash=.55;selectedTurret=t;addBurst(t.x,t.y,specs[t.type].color,9);note(`${specs[t.type].name} 위치를 자유롭게 옮겼어요.`);sync();return true}
+function pointerDist(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
+// Weapon cards support both click-to-select and drag-to-build.
+document.querySelectorAll('.weapon[data-type]').forEach(b=>{b.addEventListener('pointerdown',e=>{if(e.button!==0||b.disabled)return;dragWeapon={type:b.dataset.type,startX:e.clientX,startY:e.clientY,moved:false};});b.addEventListener('click',()=>{if(dragWeapon&&dragWeapon.moved)return;selectedType=b.dataset.type;selectedTurret=null;ui.status.textContent=`${specs[selectedType].name}: 원하는 위치를 클릭하세요`;note(`${specs[selectedType].name} 선택됨. 원하는 위치를 클릭하거나 카드 자체를 전장으로 드래그하세요.`);sync()})});
+canvas.addEventListener('pointerdown',e=>{if(gameOver||(pvp.active&&pvp.role==='attacker'))return;const p=clientToCanvas(e.clientX,e.clientY);if(!p)return;mouse={...p,inside:true};if(selectedType){mapAction={kind:'place',start:p};return}const t=turretAt(p);if(t){dragTower={t,start:p,moved:false};canvas.setPointerCapture?.(e.pointerId);return}mapAction={kind:'empty',start:p}});
+window.addEventListener('pointermove',e=>{const p=clientToCanvas(e.clientX,e.clientY);if(p){mouse={...p,inside:true}}else if(!dragTower&&!dragWeapon)mouse.inside=false;if(dragWeapon){if(Math.hypot(e.clientX-dragWeapon.startX,e.clientY-dragWeapon.startY)>7){dragWeapon.moved=true;selectedType=dragWeapon.type;selectedTurret=null;const p2=clientToCanvas(e.clientX,e.clientY);if(p2)mouse={...p2,inside:true}}}if(dragTower){const p2=clientToCanvas(e.clientX,e.clientY);if(p2){if(pointerDist(p2,dragTower.start)>7)dragTower.moved=true;mouse={...p2,inside:true}}} });
+window.addEventListener('pointerup',e=>{if(dragWeapon){const d=dragWeapon;dragWeapon=null;if(d.moved){if(clientToCanvas(e.clientX,e.clientY))placeAtClient(e.clientX,e.clientY,d.type);else{selectedType=null;note('포탑을 전장 안의 유효한 위치에 드롭해야 설치할 수 있어요.');sync()}}return}if(dragTower){const d=dragTower;dragTower=null;if(d.moved){moveTowerAtClient(e.clientX,e.clientY,d.t)}else{selectedTurret=d.t;upgradeChoosing=false;selectedType=null;note(`${specs[d.t.type].name} Lv.${d.t.level} 선택됨. 강화하거나 다른 패드로 드래그하세요.`);sync()}return}if(mapAction){const act=mapAction;mapAction=null;if(act.kind==='place'&&selectedType){placeAtClient(e.clientX,e.clientY,selectedType)}else if(act.kind==='empty'){selectedTurret=null;upgradeChoosing=false;sync()}}});
+$('cancelBtn').addEventListener('click',()=>{selectedType=null;dragWeapon=null;ui.status.textContent='포탑 선택이 취소됐어요';upgradeChoosing=false;sync()});$('waveBtn').addEventListener('click',startWave);$('audioBtn').addEventListener('click',toggleAudio);$('speedBtn').addEventListener('click',()=>{gameSpeed=gameSpeed===1?2:gameSpeed===2?3:1;note(gameSpeed===1?'1배속으로 돌아왔습니다.':`${gameSpeed}배속 작동 중. 적 이동·포탑 공격·탄환·웨이브 진행이 함께 빨라집니다.`);sync()});ui.upgrade.addEventListener('click',()=>upgrade());$('speedBranch').addEventListener('click',()=>upgrade('speed'));$('powerBranch').addEventListener('click',()=>upgrade('power'));$('rangeBranch').addEventListener('click',()=>upgrade('range'));ui.sell.addEventListener('click',sell);$('empBtn').addEventListener('click',useEmp);$('overdriveBtn').addEventListener('click',useOverdrive);document.querySelectorAll('.diffpick[data-difficulty]').forEach(b=>b.addEventListener('click',()=>{difficulty=b.dataset.difficulty;difficultyMultiplier=difficulty==='easy'?1:difficulty==='normal'?2:4;document.querySelectorAll('.diffpick[data-difficulty]').forEach(x=>x.classList.toggle('active',x===b));const hints={easy:'예상 난이도: 쉬움 — 초반부터 안정적으로 방어하기 좋습니다.',normal:'예상 난이도: 보통 — 좋은 배치와 약점 대응으로 클리어를 노릴 수 있습니다.',hard:'예상 난이도: 어려움 — 적 체력·보호막·코어 피해가 쉬움의 4배라 상당히 어렵고, 클리어를 보장하기 어렵습니다.'};$('difficultyHint').textContent=hints[difficulty]}));let chosenMap='crystal';document.querySelectorAll('.mappick').forEach(b=>b.addEventListener('click',()=>{chosenMap=b.dataset.map;document.querySelectorAll('.mappick').forEach(x=>x.classList.toggle('active',x===b))}));$('startMissionBtn').addEventListener('click',()=>{$('difficultyModal').classList.remove('show');$('modeModal').classList.add('show')});
+$('beginSelectedMap').addEventListener('click',()=>{mapTheme=chosenMap;started=true;$('mapModal').classList.remove('show');if(gameMode==='pvp-host'){if(audioOn)startBgm();createPvpRoom();return;}if(audioOn)startBgm();note(`작전 시작! 난이도 ${difficulty==='easy'?'쉬움':difficulty==='normal'?'보통':'어려움'} · 적 스펙 ${difficultyMultiplier}배 · 전장 ${({crystal:'수정 협곡',desert:'황혼 사막',volcanic:'화산 지대',arctic:'빙결 평원'})[mapTheme]}. 자유 배치로 방어선을 구축하세요.`);ui.status.textContent=`${difficulty==='easy'?'쉬움':difficulty==='normal'?'보통':'어려움'} · ${pathLabel()}`;$('rewardText').textContent='시작 보급: 700G · 자유 배치 · 포탑 간격 80px';sync()});$('openChestBtn').addEventListener('click',openRewardChest);$('chestContinueBtn').addEventListener('click',()=>{ $('chestModal').classList.remove('show');reset() });// Mode selection and PeerJS WebRTC 1v1 (host defends, guest sends enemy units).
+function selectPlayMode(mode){const attack=mode==='attack';$('chooseDefenseMode').classList.toggle('active',!attack);$('chooseAttackMode').classList.toggle('active',attack);$('defenseModeOptions').hidden=attack;$('attackModeOptions').hidden=!attack;$('modeStatus').textContent=attack?'친구의 방 코드가 필요합니다. 친구는 디펜스 → 1대1 방 만들기를 선택해야 해요.':'혼자 플레이하거나, 맵을 선택한 뒤 1대1 방을 만들 수 있어요.';}
+$('chooseDefenseMode').addEventListener('click',()=>selectPlayMode('defense'));$('chooseAttackMode').addEventListener('click',()=>selectPlayMode('attack'));
+$('soloDefenseBtn').addEventListener('click',()=>{gameMode='solo-defense';pvp.role=null;$('modeModal').classList.remove('show');$('mapModal').classList.add('show')});
+$('createRoomBtn').addEventListener('click',()=>{gameMode='pvp-host';pvp.role='defender';$('modeModal').classList.remove('show');$('mapModal').classList.add('show');});
+$('joinRoomBtn').addEventListener('click',()=>{const code=$('roomCodeInput').value.trim();if(!code){$('modeStatus').textContent='친구에게 받은 방 코드를 입력하세요.';return;}gameMode='pvp-guest';pvp.role='attacker';pvp.roomCode=code;$('modeModal').classList.remove('show');beginPvpJoin(code)});
+function setNetworkStatus(message){$('pvpNetworkStatus').textContent=message;}
+function closePvpConnection(){try{if(pvp.conn){pvp.conn.close();}}catch(e){}try{if(pvp.peer){pvp.peer.destroy();}}catch(e){}pvp.conn=null;pvp.peer=null;pvp.active=false;pvp.joining=false;}
+function showPvpWait(isHost){$('pvpWaitModal').classList.add('show');$('pvpWaitTitle').textContent=isHost?'🌐 1대1 방 생성':'🌐 친구 방에 접속';$('pvpWaitText').textContent=isHost?'친구가 파일을 열고 공격 모드에서 아래 방 코드를 입력하면 대전이 시작됩니다.':'친구 방에 연결하고 있어요. 방장이 연결을 승인할 때까지 기다려 주세요.';$('roomCodeBox').style.display=isHost?'flex':'none';$('roomCodeDisplay').textContent=isHost?(pvp.roomCode||'연결 준비 중…'):'접속 중…';$('copyRoomCode').disabled=!isHost||!pvp.roomCode;$('shareRoomLink').disabled=!isHost||!pvp.roomCode;setNetworkStatus('PeerJS 신호 서버에 연결 중…');}
+function initPvpDefenderMatch(){gold=700;hp=35;maxHp=35;stage=1;waveInStage=1;stageWaves=15;globalWave=1;kills=0;energy=0;gameSpeed=1;upgradeChoosing=false;mapVariant=0;waveWasActive=false;turrets=[];enemies=[];bullets=[];particles=[];skillRings=[];selectedType=null;selectedTurret=null;spawning=false;spawnLeft=0;spawnTimer=0;gameOver=false;elapsed=0;overdriveUntil=0;stageClearReady=false;bonusDamage=1;bonusAttackSpeed=1;bonusRange=0;rewardMultiplier=1;energyMultiplier=1;costDiscount=0;relicNames=[];dragWeapon=null;dragTower=null;mapAction=null;pvp.attackEnergy=420;pvp.active=true;pvp.matchStartedAt=performance.now();pvp.winner=null;started=true;$('overlay').classList.remove('show');$('relicModal').classList.remove('show');$('chestModal').classList.remove('show');$('mapModal').classList.remove('show');$('pvpWaitModal').classList.remove('show');$('defenseControls').style.display='contents';$('attackPanel').hidden=true;$('rewardText').textContent='1대1 대전 · 포탑을 설치해 상대가 보내는 유닛을 막으세요.';ui.status.textContent='1대1 대전 중 · 상대의 공격을 방어하세요';note('대전 시작! 포탑을 설치하세요. 상대의 공격을 3분 동안 막아내면 방어 승리입니다.');sync();if(audioOn)startBgm();sendPvpSnapshot(true);}
+function createPvpRoom(){if(!window.Peer){$('pvpWaitModal').classList.add('show');setNetworkStatus('PeerJS 라이브러리를 불러오지 못했어요. 인터넷 연결을 확인하고 파일을 다시 열어 주세요.');return;}closePvpConnection();pvp.role='defender';pvp.roomCode='';pvp.joining=false;showPvpWait(true);pvp.peer=new Peer();pvp.peer.on('open',id=>{pvp.roomCode=id;$('roomCodeDisplay').textContent=id;$('copyRoomCode').disabled=false;$('shareRoomLink').disabled=false;setNetworkStatus('방 생성 완료! 초대 링크를 공유하면 친구가 링크를 눌러 바로 참가할 수 있어요.');});pvp.peer.on('connection',conn=>{if(pvp.conn){conn.close();return;}pvp.conn=conn;conn.on('data',handlePvpMessage);conn.on('close',()=>{if(pvp.active){note('상대 연결이 끊어졌어요. 새 방을 만들어 다시 연결할 수 있습니다.');setNetworkStatus('상대 연결이 끊어졌습니다.');}});conn.on('open',()=>{pvp.active=true;initPvpDefenderMatch();setNetworkStatus('친구와 연결됐어요. 대전 시작!');$('pvpWaitModal').classList.remove('show');});});pvp.peer.on('error',err=>{setNetworkStatus('방 생성 실패: '+(err&&err.type?err.type:'연결 오류')+'. 인터넷 연결을 확인하고 다시 시도해 주세요.');});}
+function beginPvpJoin(code){if(!window.Peer){$('pvpWaitModal').classList.add('show');showPvpWait(false);setNetworkStatus('PeerJS 라이브러리를 불러오지 못했어요. 인터넷 연결을 확인하고 파일을 다시 열어 주세요.');return;}closePvpConnection();pvp.role='attacker';pvp.roomCode=code;pvp.joining=true;showPvpWait(false);pvp.peer=new Peer();pvp.peer.on('open',()=>{const conn=pvp.peer.connect(code,{reliable:true});pvp.conn=conn;conn.on('data',handlePvpMessage);conn.on('open',()=>{pvp.active=true;pvp.joining=false;setNetworkStatus('연결됐어요. 상대가 전장을 준비하면 공격을 시작할 수 있습니다.');$('pvpWaitModal').classList.remove('show');$('defenseControls').style.display='none';$('attackPanel').hidden=false;ui.status.textContent='공격 역할 · 적 유닛을 전송해 상대 코어를 파괴하세요';$('attackStatus').textContent='상대 전장과 연결됨. 유닛을 선택해 보내세요.';note('공격 지휘 시작! 자원이 차오를 때마다 적 유닛을 보내세요.');});conn.on('close',()=>{pvp.active=false;setNetworkStatus('상대와 연결이 끊어졌습니다.');$('pvpWaitModal').classList.add('show');});});pvp.peer.on('error',err=>{setNetworkStatus('접속 실패: '+(err&&err.type?err.type:'연결 오류')+'. 방 코드와 인터넷 연결을 확인해 주세요.');});}
+function sendPvpSnapshot(force=false){if(!pvp.conn||!pvp.conn.open||pvp.role!=='defender')return;const now=performance.now();if(!force&&now-pvp.lastSnapshot<180)return;pvp.lastSnapshot=now;try{pvp.conn.send({type:'state',state:{gold,hp,maxHp,stage,waveInStage,stageWaves,globalWave,kills,energy,difficulty,difficultyMultiplier,mapTheme,mapVariant,gameOver,winner:pvp.winner,attackEnergy:pvp.attackEnergy,turrets:turrets.map(t=>({...t,upgrades:{...(t.upgrades||{})}})),enemies:enemies.map(e=>({...e,path:e.path.map(pt=>Array.isArray(pt)?pt.slice():{...pt})})),bullets:bullets.map(b=>({x:b.x,y:b.y,tx:b.tx,ty:b.ty,life:b.life,beam:b.beam,type:b.type,color:b.color}))}});}catch(e){}}
+function handlePvpMessage(message){if(!message||typeof message!=='object')return;if(message.type==='attack'&&pvp.role==='defender'&&pvp.active){const kind=message.kind,cost=ATTACK_COST[kind],now=performance.now();if(!cost||gameOver||pvp.attackEnergy<cost||now-pvp.lastAttackAt<125)return;pvp.lastAttackAt=now;pvp.attackEnergy-=cost;spawnEnemy(kind);note(`상대가 ${({grunt:'돌격병',runner:'고속 유닛',tank:'중장갑',phase:'위상 유닛',shield:'보호막 유닛',healer:'수리 유닛',boss:'보스'})[kind]||'적 유닛'}을 보냈어요.`);sendPvpSnapshot(true);return;}if(message.type==='state'&&pvp.role==='attacker'&&message.state){applyPvpSnapshot(message.state);}}
+function finishPvpMatch(winner){if(gameOver)return;gameOver=true;spawning=false;pvp.winner=winner;$('overlay').classList.add('show');$('overlayTitle').textContent=winner==='defender'?'🛡️ 방어 성공!':'⚔️ 공격 성공!';$('overlayText').textContent=winner==='defender'?'3분 동안 코어를 지켜냈습니다. 방어 플레이어가 승리했어요!':'상대 코어가 파괴됐습니다. 공격 플레이어가 승리했어요!';$('restart').textContent='메뉴로 돌아가기';ui.status.textContent='1대1 대전 종료';sync();sendPvpSnapshot(true);}
+function applyPvpSnapshot(state){gold=state.gold;hp=state.hp;maxHp=state.maxHp;stage=state.stage;waveInStage=state.waveInStage;stageWaves=state.stageWaves;globalWave=state.globalWave;kills=state.kills;energy=state.energy;difficulty=state.difficulty;difficultyMultiplier=state.difficultyMultiplier;mapTheme=state.mapTheme;mapVariant=state.mapVariant;pvp.attackEnergy=state.attackEnergy;turrets=state.turrets||[];enemies=state.enemies||[];bullets=state.bullets||[];particles=[];skillRings=[];gameOver=!!state.gameOver;pvp.winner=state.winner||null;pvp.active=true;started=true;$('defenseControls').style.display='none';$('attackPanel').hidden=false;if(gameOver){$('overlay').classList.add('show');$('overlayTitle').textContent=pvp.winner==='defender'?'🛡️ 방어 성공!':'🏆 공격 성공!';$('overlayText').textContent=pvp.winner==='defender'?'3분 동안 코어를 지켜냈습니다. 방어 플레이어가 승리했어요!':'상대 코어를 파괴했습니다. 1대1 대전에서 승리했어요!';$('restart').textContent='메뉴로 돌아가기';}else{$('overlay').classList.remove('show');$('restart').textContent='새 작전 시작';}if($('pvpWaitModal').classList.contains('show'))$('pvpWaitModal').classList.remove('show');$('attackStatus').textContent=gameOver?(pvp.winner==='defender'?'패배! 상대가 3분 동안 코어를 지켰어요.':'승리! 상대 코어를 파괴했습니다.'):'유닛을 보내 상대 코어에 압박을 주세요.';sync();}
+function sendAttack(kind){if(!pvp.active||pvp.role!=='attacker'||!pvp.conn||!pvp.conn.open){$('attackStatus').textContent='아직 대전 연결이 완료되지 않았어요.';return;}const cost=ATTACK_COST[kind];if(!cost||pvp.attackEnergy<cost){$('attackStatus').textContent='공격 자원이 부족합니다. 잠시 기다려 주세요.';return;}try{pvp.conn.send({type:'attack',kind});$('attackStatus').textContent=`${({grunt:'돌격병',runner:'고속 유닛',tank:'중장갑',phase:'위상 유닛',shield:'보호막 유닛',healer:'수리 유닛',boss:'보스'})[kind]} 전송 요청 완료!`; }catch(e){$('attackStatus').textContent='전송하지 못했어요. 연결 상태를 확인해 주세요.';}}
+document.querySelectorAll('.attack-unit').forEach(b=>b.addEventListener('click',()=>sendAttack(b.dataset.kind)));
+$('copyRoomCode').addEventListener('click',async()=>{if(!pvp.roomCode)return;try{await navigator.clipboard.writeText(pvp.roomCode);setNetworkStatus('방 코드를 클립보드에 복사했어요. 친구에게 보내 주세요.');}catch(e){const range=document.createRange();range.selectNodeContents($('roomCodeDisplay'));const sel=window.getSelection();sel.removeAllRanges();sel.addRange(range);setNetworkStatus('코드를 선택했어요. Ctrl+C로 복사해 친구에게 보내 주세요.');}});
+$('shareRoomLink').addEventListener('click',async()=>{if(!pvp.roomCode)return;if(location.protocol==='file:'){setNetworkStatus('초대 링크를 쓰려면 이 HTML을 먼저 웹사이트에 올려야 해요. 지금은 파일 경로가 친구 컴퓨터에서 열리지 않으니 코드 복사를 이용해 주세요.');return;}const url=new URL(location.href);url.searchParams.set('join',pvp.roomCode);const invite=url.toString();try{if(navigator.share){await navigator.share({title:'CORE DEFENSE 1대1 초대',text:'이 링크를 열면 공격 역할로 바로 참가할 수 있어요!',url:invite});}else{await navigator.clipboard.writeText(invite);setNetworkStatus('초대 링크를 복사했어요. 친구에게 보내 주세요.');}}catch(e){try{await navigator.clipboard.writeText(invite);setNetworkStatus('초대 링크를 복사했어요. 친구에게 보내 주세요.');}catch(_){setNetworkStatus('초대 링크 복사에 실패했어요. 브라우저 권한을 확인해 주세요.');}}});
+$('cancelNetworkBtn').addEventListener('click',()=>{closePvpConnection();$('pvpWaitModal').classList.remove('show');$('modeModal').classList.add('show');});
+$('restart').addEventListener('click',()=>{if(pvp.active&&pvp.role==='attacker'){closePvpConnection();reset();return;}reset()});
+function frame(ts){const dt=Math.min(.04,(ts-last)/1000||0);last=ts;update(dt*gameSpeed);draw();if(pvp.active&&pvp.role==='defender'&&performance.now()-pvp.lastSnapshot>180)sendPvpSnapshot();requestAnimationFrame(frame)}
+document.querySelectorAll('.diffpick[data-difficulty]').forEach(b=>b.classList.toggle('active',b.dataset.difficulty===difficulty));const inviteRoom=new URLSearchParams(location.search).get('join');if(inviteRoom&&location.protocol!=='file:'){difficulty='normal';difficultyMultiplier=2;$('difficultyModal').classList.remove('show');$('modeModal').classList.remove('show');gameMode='pvp-guest';pvp.role='attacker';pvp.roomCode=inviteRoom;beginPvpJoin(inviteRoom);}sync();requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
